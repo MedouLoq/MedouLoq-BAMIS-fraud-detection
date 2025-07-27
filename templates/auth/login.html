@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Banking Fraud Detection Platform</title>
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            font-family: var(--font-family);
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            width: 100%;
+            max-width: 400px;
+            margin: var(--spacing-lg);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .login-logo {
+            font-size: 48px;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .login-subtitle {
+            color: var(--gray-600);
+            font-size: var(--font-size-sm);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: var(--spacing-md);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid;
+        }
+        
+        .alert-error {
+            background-color: var(--light-red);
+            border-left-color: var(--danger-red);
+            color: #721c24;
+        }
+        
+        .demo-credentials {
+            background: var(--gray-100);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            margin-top: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+        }
+        
+        .demo-credentials h4 {
+            margin: 0 0 var(--spacing-sm) 0;
+            color: var(--gray-800);
+        }
+        
+        .demo-credentials p {
+            margin: var(--spacing-xs) 0;
+            color: var(--gray-600);
+        }
+        
+        .footer-text {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            color: var(--gray-600);
+            font-size: var(--font-size-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">🏦</div>
+            <h1 class="login-title">Fraud Detection</h1>
+            <p class="login-subtitle">Plateforme de détection de fraude bancaire</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username" class="form-label">Nom d'utilisateur</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-control" 
+                    required 
+                    autocomplete="username"
+                    placeholder="Entrez votre nom d'utilisateur"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-control" 
+                    required 
+                    autocomplete="current-password"
+                    placeholder="Entrez votre mot de passe"
+                >
+            </div>
+
+            <button type="submit" class="btn-login">
+                Se connecter
+            </button>
+        </form>
+
+        <div class="demo-credentials">
+            <h4>🔑 Comptes de démonstration</h4>
+            <p><strong>Admin:</strong> admin / admin123</p>
+        
+        </div>
+
+        <div class="footer-text">
+            © 2024 Banking Fraud Detection Platform
+        </div>
+    </div>
+
+    <script>
+        // Auto-focus sur le champ username
+        document.getElementById('username').focus();
+        
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.login-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+

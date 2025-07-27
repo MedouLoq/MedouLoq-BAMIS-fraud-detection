@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traitement en cours - Banking Fraud Detection Platform</title>
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            font-family: var(--font-family);
+        }
+        
+        .processing-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .processing-header {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .processing-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .processing-subtitle {
+            color: var(--gray-600);
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .file-info {
+            background: var(--gray-100);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-green) 0deg, var(--gray-200) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-lg);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-circle::before {
+            content: '';
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+        
+        .progress-text {
+            position: relative;
+            z-index: 1;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+        
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .status-card {
+            background: var(--gray-100);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            border-left: 4px solid var(--primary-green);
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .status-card.fraud {
+            border-left-color: var(--primary-orange);
+        }
+        
+        .status-card.claude {
+            border-left-color: var(--info-blue);
+        }
+        
+        .status-card h4 {
+            font-size: var(--font-size-base);
+            color: var(--gray-700);
+            margin-bottom: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .count {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .claude-status {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .claude-status h4 {
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .loading-dots {
+            display: inline-block;
+        }
+        
+        .loading-dots::after {
+            content: '';
+            animation: dots 2s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .completion-message {
+            background: var(--light-green);
+            border: 2px solid var(--primary-green);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-lg);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .completion-message h4 {
+            color: var(--dark-green);
+            margin-bottom: var(--spacing-md);
+            font-size: 24px;
+        }
+        
+        .completion-message p {
+            color: var(--dark-green);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .btn-dashboard {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .processing-steps {
+            text-align: left;
+            background: var(--gray-100);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .processing-steps h4 {
+            margin-bottom: var(--spacing-md);
+            color: var(--gray-800);
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) 0;
+            color: var(--gray-600);
+        }
+        
+        .step.active {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+        
+        .step.completed {
+            color: var(--gray-500);
+        }
+        
+        .step-icon {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .current-transaction {
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+            margin-top: var(--spacing-sm);
+            font-family: monospace;
+        }
+        
+        .error-message {
+            background: var(--light-red);
+            border: 2px solid var(--danger-red);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            color: var(--danger-red);
+        }
+    </style>
+</head>
+<body>
+    <div class="processing-container">
+        <div class="processing-header">
+            <h1 class="processing-title">🔄 Traitement des Données</h1>
+            <p class="processing-subtitle">
+                Analyse ML et génération d'insights IA en cours
+            </p>
+            <div class="file-info">
+                <strong>Fichier:</strong> {{ filename }}<br>
+                <strong>Taille:</strong> {{ file_size|filesizeformat }}
+            </div>
+        </div>
+        
+        <div class="progress-circle" id="progressCircle">
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <div class="status-cards">
+            <div class="status-card">
+                <h4>Transactions Traitées</h4>
+                <div class="count" id="processedCount">0</div>
+            </div>
+            <div class="status-card fraud">
+                <h4>Fraudes Détectées</h4>
+                <div class="count" id="fraudCount">0</div>
+            </div>
+            <div class="status-card claude">
+                <h4>Analyses IA</h4>
+                <div class="count" id="claudeCount">0</div>
+            </div>
+        </div>
+        
+        <div class="claude-status" id="claudeStatus">
+            <h4>🤖 Analyse IA en cours<span class="loading-dots"></span></h4>
+            <p id="claudeStatusText">Génération des explications pour les transactions frauduleuses...</p>
+            <div class="current-transaction" id="currentTransaction"></div>
+        </div>
+        
+        <div class="processing-steps">
+            <h4>📋 Étapes de Traitement</h4>
+            <div class="step active" id="step1">
+                <span class="step-icon">📤</span>
+                Lecture et validation du fichier CSV
+            </div>
+            <div class="step" id="step2">
+                <span class="step-icon">🤖</span>
+                Application du modèle ML de détection
+            </div>
+            <div class="step" id="step3">
+                <span class="step-icon">🧠</span>
+                Génération des analyses Claude
+            </div>
+            <div class="step" id="step4">
+                <span class="step-icon">📊</span>
+                Mise à jour des statistiques clients/banques
+            </div>
+            <div class="step" id="step5">
+                <span class="step-icon">✅</span>
+                Finalisation et redirection
+            </div>
+        </div>
+        
+        <div id="completionMessage" class="completion-message" style="display: none;">
+            <h4>✅ Traitement Terminé !</h4>
+            <p>Toutes les transactions ont été analysées et les explications IA générées.</p>
+            <a href="{% url 'dashboard' %}" class="btn-dashboard">Voir le Dashboard</a>
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <h4>❌ Erreur de Traitement</h4>
+            <p id="errorText"></p>
+            <a href="{% url 'upload_csv' %}" class="btn-dashboard">Réessayer</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Démarrer le traitement automatiquement
+            startCsvProcessing();
+        });
+
+        function startCsvProcessing() {
+            const eventSource = new EventSource('{% url "process_csv_stream" %}');
+            const progressCircle = document.getElementById('progressCircle');
+            const progressText = document.getElementById('progressText');
+            const processedCount = document.getElementById('processedCount');
+            const fraudCount = document.getElementById('fraudCount');
+            const claudeCount = document.getElementById('claudeCount');
+            const completionMessage = document.getElementById('completionMessage');
+            const claudeStatus = document.getElementById('claudeStatus');
+            const currentTransaction = document.getElementById('currentTransaction');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.error) {
+                    showError(data.error);
+                    eventSource.close();
+                    return;
+                }
+                
+                if (data.completed) {
+                    // Traitement terminé
+                    progressText.textContent = '100%';
+                    updateProgressCircle(progressCircle, 100);
+                    completionMessage.style.display = 'block';
+                    claudeStatus.style.display = 'none';
+                    updateStep(5, 'completed');
+                    eventSource.close();
+                    
+                    // Redirection automatique après 3 secondes
+                    setTimeout(() => {
+                        window.location.href = '{% url "dashboard" %}';
+                    }, 3000);
+                } else {
+                    // Mise à jour du progrès
+                    const progress = Math.round(data.progress);
+                    progressText.textContent = progress + '%';
+                    processedCount.textContent = data.processed;
+                    fraudCount.textContent = data.frauds;
+                    claudeCount.textContent = data.claude_analyses || data.frauds;
+                    updateProgressCircle(progressCircle, progress);
+                    
+                    // Mise à jour des étapes
+                    if (progress > 0) updateStep(1, 'completed');
+                    if (progress > 20) updateStep(2, 'active');
+                    if (progress > 40) updateStep(2, 'completed');
+                    if (progress > 60) updateStep(3, 'active');
+                    if (progress > 80) updateStep(3, 'completed');
+                    if (progress > 90) updateStep(4, 'active');
+                    
+                    // Mise à jour du statut Claude
+                    if (data.current_transaction) {
+                        currentTransaction.textContent = `Transaction actuelle: ${data.current_transaction}`;
+                    }
+                }
+            };
+            
+            eventSource.onerror = function(event) {
+                console.error('EventSource failed:', event);
+                showError('Erreur de connexion au serveur');
+                eventSource.close();
+            };
+        }
+
+        function updateProgressCircle(circle, percentage) {
+            const degrees = (percentage / 100) * 360;
+            circle.style.background = `conic-gradient(var(--primary-green) ${degrees}deg, var(--gray-200) ${degrees}deg)`;
+        }
+
+        function updateStep(stepNumber, status) {
+            const step = document.getElementById(`step${stepNumber}`);
+            if (step) {
+                step.className = `step ${status}`;
+                if (status === 'completed') {
+                    step.querySelector('.step-icon').textContent = '✅';
+                } else if (status === 'active') {
+                    step.querySelector('.step-icon').textContent = '⏳';
+                }
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('claudeStatus').style.display = 'none';
+        }
+
+        // Animation d'entrée
+        const container = document.querySelector('.processing-container');
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            container.style.transition = 'all 0.5s ease';
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }, 100);
+    </script>
+</body>
+</html>
+

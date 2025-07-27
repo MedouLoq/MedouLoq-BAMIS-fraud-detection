@@ -1,0 +1,462 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Transactions - Banking Fraud Detection Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-form {
+        background: white;
+        border-radius: var(--border-radius-xl);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-md);
+        margin-bottom: var(--spacing-xl);
+        border: 1px solid var(--gray-200);
+    }
+    
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: var(--spacing-sm);
+        justify-content: flex-end;
+    }
+    
+    .transaction-table {
+        background: white;
+        border-radius: var(--border-radius-xl);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .transaction-row {
+        transition: var(--transition-fast);
+        border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .transaction-row:hover {
+        background: var(--gray-50);
+    }
+    
+    .transaction-row:last-child {
+        border-bottom: none;
+    }
+    
+    .transaction-cell {
+        padding: var(--spacing-md);
+        vertical-align: middle;
+    }
+    
+    .transaction-id {
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: var(--font-size-sm);
+        color: var(--gray-600);
+        font-weight: 600;
+    }
+    
+    .transaction-amount {
+        font-weight: 700;
+        font-size: var(--font-size-lg);
+    }
+    
+    .transaction-amount.fraud {
+        color: var(--danger-red);
+    }
+    
+    .transaction-amount.legitimate {
+        color: var(--primary-green);
+    }
+    
+    .client-info {
+        font-size: var(--font-size-sm);
+        color: var(--gray-600);
+    }
+    
+    .transaction-type {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .type-trf {
+        background: var(--light-blue);
+        color: var(--info-blue);
+    }
+    
+    .type-rt {
+        background: var(--light-orange);
+        color: var(--dark-orange);
+    }
+    
+    .type-rcd {
+        background: var(--light-green);
+        color: var(--dark-green);
+    }
+    
+    .type-pf {
+        background: var(--light-purple);
+        color: var(--purple);
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+    }
+    
+    .status-ok {
+        background: var(--light-green);
+        color: var(--dark-green);
+    }
+    
+    .status-ko {
+        background: var(--light-red);
+        color: var(--danger-red);
+    }
+    
+    .status-att {
+        background: var(--light-orange);
+        color: var(--dark-orange);
+    }
+    
+    .fraud-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius);
+        font-size: var(--font-size-xs);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    
+    .fraud-yes {
+        background: var(--light-red);
+        color: var(--danger-red);
+        animation: pulse 2s infinite;
+    }
+    
+    .fraud-no {
+        background: var(--light-green);
+        color: var(--dark-green);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: var(--spacing-2xl);
+        color: var(--gray-500);
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: var(--spacing-lg);
+        opacity: 0.5;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-xl);
+    }
+    
+    .page-link {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: 1px solid var(--gray-300);
+        border-radius: var(--border-radius);
+        color: var(--gray-700);
+        text-decoration: none;
+        transition: var(--transition-fast);
+    }
+    
+    .page-link:hover {
+        background: var(--primary-green);
+        color: white;
+        border-color: var(--primary-green);
+    }
+    
+    .page-link.active {
+        background: var(--primary-green);
+        color: white;
+        border-color: var(--primary-green);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="page-title">
+                <svg width="24" height="24" class="me-2">
+                    <use href="#icon-transaction"></use>
+                </svg>
+                Transactions
+            </h1>
+            <p class="text-muted">Gestion et analyse des transactions bancaires</p>
+        </div>
+      
+        <a href="{% url 'upload_csv' %}" class="btn btn-primary">
+            <svg width="20" height="20">
+                <use href="#icon-upload"></use>
+            </svg>
+            Importer CSV
+        </a>
+    
+    </div>
+</div>
+
+<!-- Filtres -->
+<form method="get" class="filter-form">
+    <div class="filter-grid">
+        <div class="form-group">
+            <label for="trx_type" class="form-label">Type de Transaction</label>
+            <select name="trx_type" id="trx_type" class="form-control">
+                <option value="">Tous les types</option>
+                <option value="TRF" {% if current_filters.trx_type == 'TRF' %}selected{% endif %}>Transfert (TRF)</option>
+                <option value="RT" {% if current_filters.trx_type == 'RT' %}selected{% endif %}>Retrait (RT)</option>
+                <option value="RCD" {% if current_filters.trx_type == 'RCD' %}selected{% endif %}>Recharge (RCD)</option>
+                <option value="PF" {% if current_filters.trx_type == 'PF' %}selected{% endif %}>Paiement (PF)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="etat" class="form-label">Statut</label>
+            <select name="etat" id="etat" class="form-control">
+                <option value="">Tous les statuts</option>
+                <option value="OK" {% if current_filters.etat == 'OK' %}selected{% endif %}>Réussie (OK)</option>
+                <option value="KO" {% if current_filters.etat == 'KO' %}selected{% endif %}>Échec (KO)</option>
+                <option value="ATT" {% if current_filters.etat == 'ATT' %}selected{% endif %}>En attente (ATT)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="fraud" class="form-label">Fraude</label>
+            <select name="fraud" id="fraud" class="form-control">
+                <option value="">Toutes</option>
+                <option value="fraud_only" {% if current_filters.fraud == 'fraud_only' %}selected{% endif %}>Fraudes uniquement</option>
+                <option value="legitimate_only" {% if current_filters.fraud == 'legitimate_only' %}selected{% endif %}>Légitimes uniquement</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="client" class="form-label">Client</label>
+            <input type="text" name="client" id="client" class="form-control" 
+                   placeholder="ID Client..." value="{{ current_filters.client|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="montant_min" class="form-label">Montant Min ( MRU)</label>
+            <input type="number" name="montant_min" id="montant_min" class="form-control" 
+                   placeholder="0" value="{{ current_filters.montant_min|default:'' }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="montant_max" class="form-label">Montant Max ( MRU)</label>
+            <input type="number" name="montant_max" id="montant_max" class="form-control" 
+                   placeholder="100000" value="{{ current_filters.montant_max|default:'' }}">
+        </div>
+    </div>
+    
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-primary">
+            <svg width="16" height="16">
+                <use href="#icon-search"></use>
+            </svg>
+            Filtrer
+        </button>
+        <a href="{% url 'transaction_list' %}" class="btn btn-outline">
+            <svg width="16" height="16">
+                <use href="#icon-close"></use>
+            </svg>
+            Effacer
+        </a>
+    </div>
+</form>
+
+<!-- Liste des Transactions -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title mb-0">
+            <svg width="20" height="20" class="me-2">
+                <use href="#icon-transaction"></use>
+            </svg>
+            Liste des Transactions
+            <span class="text-muted">({{ page_obj.paginator.count }} transaction{{ page_obj.paginator.count|pluralize }})</span>
+        </h3>
+    </div>
+    
+    {% if page_obj %}
+    <div class="transaction-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Transaction</th>
+                    <th>Montant</th>
+                    <th>Type</th>
+                    <th>Clients</th>
+                    <th>Statut</th>
+                    <th>Fraude</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in page_obj %}
+                <tr class="transaction-row">
+                    <td class="transaction-cell">
+                        <div class="transaction-id">{{ transaction.trx }}</div>
+                    </td>
+                    <td class="transaction-cell">
+                        <div class="transaction-amount {% if transaction.ml_is_fraud %}fraud{% else %}legitimate{% endif %}">
+                            {{ transaction.montant|floatformat:2 }}  MRU
+                        </div>
+                    </td>
+                    <td class="transaction-cell">
+                        <span class="transaction-type type-{{ transaction.trx_type|lower }}">
+                            {{ transaction.get_trx_type_display }}
+                        </span>
+                    </td>
+                    <td class="transaction-cell">
+                        <div class="client-info">
+                            <strong>{{ transaction.client_i }}</strong> → <strong>{{ transaction.client_b }}</strong>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.75rem;">
+                            {{ transaction.bank_i }} → {{ transaction.bank_b }}
+                        </div>
+                    </td>
+                    <td class="transaction-cell">
+                        <span class="status-badge status-{{ transaction.etat|lower }}">
+                            {% if transaction.etat == 'OK' %}
+                                <svg width="12" height="12">
+                                    <use href="#icon-check"></use>
+                                </svg>
+                            {% elif transaction.etat == 'KO' %}
+                                <svg width="12" height="12">
+                                    <use href="#icon-close"></use>
+                                </svg>
+                            {% else %}
+                                <svg width="12" height="12">
+                                    <use href="#icon-warning"></use>
+                                </svg>
+                            {% endif %}
+                            {{ transaction.get_etat_display }}
+                        </span>
+                    </td>
+                    <td class="transaction-cell">
+                        <span class="fraud-indicator {% if transaction.ml_is_fraud %}fraud-yes{% else %}fraud-no{% endif %}">
+                            {% if transaction.ml_is_fraud %}
+                                <svg width="12" height="12">
+                                    <use href="#icon-warning"></use>
+                                </svg>
+                                FRAUDE
+                            {% else %}
+                                <svg width="12" height="12">
+                                    <use href="#icon-check"></use>
+                                </svg>
+                                LÉGITIME
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="transaction-cell">
+                        <div class="text-muted" style="font-size: 0.875rem;">
+                            {{ transaction.trx_time|date:"d/m/Y H:i" }}
+                        </div>
+                    </td>
+                    <td class="transaction-cell">
+                        <a href="{% url 'transaction_detail' transaction.id %}" class="btn btn-outline btn-sm">
+                            <svg width="14" height="14">
+                                <use href="#icon-eye"></use>
+                            </svg>
+                            Voir
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">« Premier</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">‹ Précédent</a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="page-link active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">Suivant ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">Dernier »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <h3>Aucune transaction trouvée</h3>
+        <p class="text-muted">Aucune transaction ne correspond aux critères de recherche.</p>
+   
+        <a href="{% url 'upload_csv' %}" class="btn btn-primary mt-3">
+            <svg width="20" height="20">
+                <use href="#icon-upload"></use>
+            </svg>
+            Importer des données
+        </a>
+        
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit form on filter change
+    const filterForm = document.querySelector('.filter-form');
+    const filterInputs = filterForm.querySelectorAll('select, input');
+    
+    filterInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Auto-submit après un délai pour éviter les soumissions multiples
+            clearTimeout(window.filterTimeout);
+            window.filterTimeout = setTimeout(() => {
+                filterForm.submit();
+            }, 500);
+        });
+    });
+    
+    // Animation des lignes de transaction
+    const transactionRows = document.querySelectorAll('.transaction-row');
+    transactionRows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.05}s`;
+        row.classList.add('animate-slide-up');
+    });
+});
+</script>
+{% endblock %}
+

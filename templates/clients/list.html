@@ -1,0 +1,372 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Clients - BAMIS Fraud Detection{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('filterForm');
+    
+    console.log('Form element found:', form);
+    
+    if (form) {
+        // Test form elements
+        const searchInput = form.querySelector('input[name="search"]');
+        const riskSelect = form.querySelector('select[name="risk"]');
+        const minTransInput = form.querySelector('input[name="min_transactions"]');
+        
+        console.log('Search input:', searchInput);
+        console.log('Risk select:', riskSelect);
+        console.log('Min trans input:', minTransInput);
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default to debug
+            
+            console.log('=== FORM SUBMISSION DEBUG ===');
+            
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            
+            // Get all form data
+            for (let [name, value] of formData) {
+                console.log(`Form field ${name}: "${value}"`);
+                if (value && value.trim()) {
+                    params.append(name, value.trim());
+                }
+            }
+            
+            console.log('URLSearchParams:', params.toString());
+            
+            // Manual form submission
+            const newURL = form.action + '?' + params.toString();
+            console.log('Redirecting to:', newURL);
+            
+            window.location.href = newURL;
+        });
+        
+        // Also add direct button click handler
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                console.log('Submit button clicked');
+            });
+        }
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .client-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+    
+    .client-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .client-card.risk-normal {
+        border-left-color: #28a745;
+    }
+    
+    .client-card.risk-watch {
+        border-left-color: #fd7e14;
+    }
+    
+    .client-card.risk-critical {
+        border-left-color: #dc3545;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+    
+    .stat-card.orange {
+        background: linear-gradient(135deg, #fd7e14 0%, #ff8c42 100%);
+    }
+    
+    .stat-card.red {
+        background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+    }
+    
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .risk-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .risk-normal {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .risk-watch {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .risk-critical {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .debug-info {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-family: monospace;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Debug Information -->
+  
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">Gestion des Clients</h1>
+            <p class="text-muted">Surveillance et analyse des profils clients</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3 class="mb-1">{{ page_obj.paginator.count }}</h3>
+            <p class="mb-0">Clients Total</p>
+        </div>
+        <div class="stat-card orange">
+            <h3 class="mb-1">{{ clients_watch_count|default:0 }}</h3>
+            <p class="mb-0">Sous Surveillance</p>
+        </div>
+        <div class="stat-card red">
+            <h3 class="mb-1">{{ clients_suspect_count|default:0 }}</h3>
+            <p class="mb-0">Suspects</p>
+        </div>
+        <div class="stat-card">
+            <h3 class="mb-1">{{ total_fraud_transactions|default:0 }}</h3>
+            <p class="mb-0">Fraudes Détectées</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+   <!-- Styled filter section with working form -->
+<div class="filter-section">
+    <!-- Main filter form with Bootstrap styling but simple structure -->
+    <form method="GET" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Rechercher Client</label>
+            <input type="text" 
+                   class="form-control" 
+                   name="search" 
+                   value="{{ request.GET.search|default:'' }}" 
+                   placeholder="ID Client...">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Niveau de Risque</label>
+            <select class="form-select" name="risk">
+                <option value="">Tous les niveaux</option>
+                <option value="NORMAL" {% if request.GET.risk == 'NORMAL' %}selected{% endif %}>Normal</option>
+                <option value="WATCH" {% if request.GET.risk == 'WATCH' %}selected{% endif %}>Surveillance</option>
+                <option value="SUSPECT" {% if request.GET.risk == 'SUSPECT' %}selected{% endif %}>Suspect</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Transactions Min</label>
+            <input type="number" 
+                   class="form-control" 
+                   name="min_transactions" 
+                   value="{{ request.GET.min_transactions|default:'' }}" 
+                   placeholder="0" 
+                   min="0">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div class="d-grid">
+                <!-- Simple input button instead of complex button -->
+                <input type="submit" value="🔍 Filtrer" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+    
+    <!-- Quick filter buttons -->
+    <div class="mt-3">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="?risk=SUSPECT" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-exclamation-triangle"></i> Suspects Uniquement
+            </a>
+            <a href="?risk=WATCH" class="btn btn-sm btn-outline-warning">
+                <i class="fas fa-eye"></i> Surveillance
+            </a>
+            <a href="?min_transactions=10" class="btn btn-sm btn-outline-success">
+                <i class="fas fa-arrow-up"></i> 10+ Transactions
+            </a>
+            <a href="?min_transactions=50" class="btn btn-sm btn-outline-info">
+                <i class="fas fa-arrow-up"></i> 50+ Transactions
+            </a>
+        </div>
+    </div>
+    
+    <!-- Clear filters button -->
+    {% if request.GET.search or request.GET.risk or request.GET.min_transactions %}
+    <div class="mt-2">
+        <a href="{% url 'client_list' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-times"></i> Réinitialiser les filtres
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+    
+
+    <!-- Clients List -->
+    <div class="row">
+        {% for client in page_obj %}
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card client-card risk-{{ client.claude_risk_level|lower }}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title mb-0">
+                            <a href="{% url 'client_detail' client.client_id %}" class="text-decoration-none">
+                                Client {{ client.client_id }}
+                            </a>
+                        </h5>
+                        <span class="risk-badge risk-{{ client.claude_risk_level|lower }}">
+                            {{ client.get_claude_risk_level_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <div class="fw-bold text-primary">{{ client.total_transactions_sent }}</div>
+                            <small class="text-muted">Transactions</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="fw-bold text-danger">{{ client.fraud_transactions_count }}</div>
+                            <small class="text-muted">Fraudes</small>
+                        </div>
+                    </div>
+                    
+                    {% if client.fraud_transactions_count > 0 and client.total_transactions_sent > 0 %}
+                    {% widthratio client.fraud_transactions_count client.total_transactions_sent 100 as fraud_rate %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Taux de Fraude</small>
+                            <small>{{ fraud_rate|floatformat:1 }}%</small>
+                        </div>
+                        <div class="progress" style="height: 6px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-danger" 
+                                 style="width: {{ fraud_rate }}%; min-width: {% if fraud_rate > 0 and fraud_rate < 2 %}2%{% endif %};">
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if client.claude_risk_assessment %}
+                    <div class="mt-3 p-2 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-robot"></i> IA: {{ client.claude_risk_assessment|truncatechars:80 }}
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        <a href="{% url 'client_detail' client.client_id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> Voir Détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h4>Aucun client trouvé</h4>
+                <p class="text-muted">Aucun client ne correspond aux critères de recherche.</p>
+                {% if request.GET %}
+                <a href="{% url 'client_list' %}" class="btn btn-primary">
+                    Voir tous les clients
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Pagination clients">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

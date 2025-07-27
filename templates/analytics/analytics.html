@@ -1,0 +1,928 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Analytics - BAMIS Fraud Detection{% endblock %}
+
+{% block extra_css %}
+<style>
+      .custom-alert {
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    position: relative;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.custom-alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 0.5rem 0 0 0.5rem;
+    background: currentColor;
+    opacity: 0.3;
+}
+
+.custom-alert:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-alert.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.custom-alert.alert-success::before {
+    background: linear-gradient(180deg, #28a745, #20c997);
+}
+
+.custom-alert.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-color: #ffeaa7;
+}
+
+.custom-alert.alert-warning::before {
+    background: linear-gradient(180deg, #ffc107, #fd7e14);
+}
+
+.custom-alert.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.custom-alert.alert-danger::before {
+    background: linear-gradient(180deg, #dc3545, #e83e8c);
+}
+
+.custom-alert.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+.custom-alert.alert-info::before {
+    background: linear-gradient(180deg, #17a2b8, #6f42c1);
+}
+
+/* Optional: Add icons support */
+.custom-alert .alert-icon {
+    display: inline-block;
+    margin-right: 0.75rem;
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+
+/* Dismissible alerts */
+.custom-alert.alert-dismissible {
+    padding-right: 3rem;
+}
+
+.custom-alert .alert-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.custom-alert .alert-close:hover {
+    opacity: 1;
+}
+
+    .analytics-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    
+    .chart-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .metric-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        border-left: 4px solid #28a745;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .metric-card.orange {
+        border-left-color: #fd7e14;
+    }
+    
+    .metric-card.red {
+        border-left-color: #dc3545;
+    }
+    
+    .metric-card.blue {
+        border-left-color: #007bff;
+    }
+    
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .chart-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .insight-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #28a745;
+    }
+    
+    .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .trend-up {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .trend-down {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .trend-stable {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        z-index: 10;
+    }
+        canvas {
+    max-width: 100%;
+    width: 100% !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Analytics Header -->
+    <div class="analytics-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="fas fa-chart-line"></i> Analytics & Insights
+                </h1>
+                <p class="mb-0 opacity-75">
+                    Analyse avancée des patterns de fraude et tendances transactionnelles
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex flex-column align-items-md-end gap-2">
+                    <button class="btn btn-light" onclick="refreshAnalytics()">
+                        <i class="fas fa-sync-alt"></i> Actualiser
+                    </button>
+                    <button class="btn btn-outline-light" onclick="exportReport()">
+                        <i class="fas fa-download"></i> Exporter Rapport
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Range Filter -->
+    <div class="filter-section">
+   
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <h3 class="text-primary mb-1" id="totalTransactions">{{ total_transactions|default:0 }}</h3>
+                <p class="text-muted mb-2">Transactions Total</p>
+                <span class="trend-indicator trend-up">
+                    <i class="fas fa-arrow-up"></i> +12.5%
+                </span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card red">
+                <h3 class="text-danger mb-1" id="fraudTransactions">{{ fraud_transactions|default:0 }}</h3>
+                <p class="text-muted mb-2">Fraudes Détectées</p>
+                <span class="trend-indicator trend-down">
+                    <i class="fas fa-arrow-down"></i> -3.2%
+                </span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card orange">
+                <h3 class="text-warning mb-1" id="fraudRate">{{ fraud_rate|default:0|floatformat:1 }}%</h3>
+                <p class="text-muted mb-2">Taux de Fraude</p>
+                <span class="trend-indicator trend-stable">
+                    <i class="fas fa-minus"></i> Stable
+                </span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card blue">
+                <h3 class="text-info mb-1" id="totalAmount">{{ total_amount|default:0|floatformat:0 }} MRU</h3>
+                <p class="text-muted mb-2">Volume Total</p>
+                <span class="trend-indicator trend-up">
+                    <i class="fas fa-arrow-up"></i> +8.7%
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Graphiques Bokeh -->
+            <div class="chart-card">
+                <div class="chart-controls">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-primary"></i> 
+                        Analytics Interactifs (Bokeh)
+                    </h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button class="btn btn-outline-primary active" onclick="showBokehCharts()">
+                            Graphiques Interactifs
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="showChartJS()">
+                            Graphiques Classiques
+                        </button>
+                    </div>
+                </div>
+                <div id="bokehChartsContainer" class="position-relative">
+                    {% if bokeh_script and bokeh_div %}
+                        {{ bokeh_script|safe }}
+                        {{ bokeh_div|safe }}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Chargement des graphiques Bokeh...</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Transaction Volume Time Series (Chart.js - pour compatibilité) -->
+            <div class="chart-card" id="chartjsContainer" style="display: none;">
+                <div class="chart-controls">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-area text-primary"></i> 
+                        Volume des Transactions dans le Temps
+                    </h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <input type="radio" class="btn-check" name="volumeChart" id="volumeDaily" checked>
+                        <label class="btn btn-outline-primary" for="volumeDaily">Quotidien</label>
+                        
+                        <input type="radio" class="btn-check" name="volumeChart" id="volumeWeekly">
+                        <label class="btn btn-outline-primary" for="volumeWeekly">Hebdomadaire</label>
+                        
+                        <input type="radio" class="btn-check" name="volumeChart" id="volumeMonthly">
+                        <label class="btn btn-outline-primary" for="volumeMonthly">Mensuel</label>
+                    </div>
+                </div>
+                <div class="position-relative">
+                    <canvas id="volumeTimeSeriesChart" width="800" height="80"></canvas>
+                    <div id="volumeLoading" class="loading-overlay" style="display: none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fraud Detection Trends -->
+            <div class="chart-card">
+                <div class="chart-controls">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shield-alt text-danger"></i> 
+                        Tendances de Détection de Fraude
+                    </h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="toggleFraudDetails()">
+                        <i class="fas fa-info-circle"></i> Détails
+                    </button>
+                </div>
+                <div class="position-relative">
+                    <canvas id="fraudTrendsChart" width="800" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Transaction Types Distribution -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="chart-card">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chart-pie text-primary"></i> 
+                            Répartition par Type
+                        </h5>
+                        <canvas id="transactionTypesChart" width="800" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-card">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chart-doughnut text-primary"></i> 
+                            Statuts des Transactions
+                        </h5>
+                        <canvas id="transactionStatusChart" width="800" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hourly Activity Heatmap -->
+            <div class="chart-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-calendar-alt text-primary"></i> 
+                    Heatmap d'Activité (Heure x Jour)
+                </h5>
+                <div class="position-relative">
+                    <canvas id="activityHeatmapChart" width="800" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- AI Insights -->
+            <div class="chart-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-robot text-primary"></i> 
+                    Insights IA du Jour
+                </h5>
+                
+                {% if today_insight %}
+                <div class="insight-card">
+                    <p class="mb-2">{{ today_insight.claude_summary|truncatechars:200 }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-calendar"></i> {{ today_insight.date|date:"d/m/Y" }}
+                    </small>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-brain fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">Aucun insight disponible pour aujourd'hui</p>
+                    <button class="btn btn-sm btn-primary" onclick="generateInsights()">
+                        <i class="fas fa-magic"></i> Générer Insights
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Top Risk Clients -->
+            <div class="chart-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-users text-danger"></i> 
+                    Clients à Risque Élevé
+                </h5>
+                
+                <div id="riskClientsList">
+                    {% for client in top_risk_clients %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                        <div>
+                            <strong>{{ client.client_id }}</strong><br>
+                            <small class="text-muted">{{ client.fraud_transactions_count }} fraudes</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-danger">{{ client.fraud_rate|floatformat:1 }}%</span>
+                            <a href="{% url 'client_detail' client.client_id %}" class="btn btn-sm btn-outline-primary ms-1">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-3">Aucun client à risque élevé</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Bank Performance -->
+            <div class="chart-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-university text-primary"></i> 
+                    Performance des Banques
+                </h5>
+                <canvas id="bankPerformanceChart" width="800" height="200"></canvas>
+            </div>
+
+            <!-- Real-time Alerts -->
+            <div class="chart-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-bell text-warning"></i> 
+                    Alertes Temps Réel
+                </h5>
+                
+               
+                
+                <div class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshAlerts()">
+                        <i class="fas fa-sync-alt"></i> Actualiser
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="chart-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-tachometer-alt text-primary"></i> 
+                    Statistiques Rapides
+                </h5>
+                
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <h4 class="text-primary mb-1">{{ avg_transaction_amount|default:0|floatformat:0 }} MRU</h4>
+                        <small class="text-muted">Montant Moyen</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h4 class="text-success mb-1">{{ unique_clients|default:0 }}</h4>
+                        <small class="text-muted">Clients Uniques</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h4 class="text-warning mb-1">{{ active_banks|default:0 }}</h4>
+                        <small class="text-muted">Banques Actives</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h4 class="text-info mb-1">{{ processing_time|default:0 }}ms</h4>
+                        <small class="text-muted">Temps Traitement</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script>
+// Debug: Vérifier les données reçues
+{% if debug_mode %}
+console.log('DEBUG - Data received:');
+console.log('Volume labels:', {{ volume_labels|safe }});
+console.log('Volume legitimate:', {{ volume_legitimate|safe }});
+console.log('Volume fraud:', {{ volume_fraud|safe }});
+console.log('Transaction types:', {{ transaction_type_labels|safe }});
+console.log('Bank labels:', {{ bank_labels|safe }});
+{% endif %}
+
+// Chart configurations
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.color = '#6c757d';
+
+// Fonction pour vérifier et parser les données JSON
+function safeJsonParse(data, fallback = []) {
+    try {
+        if (typeof data === 'string') {
+            return JSON.parse(data);
+        }
+        return data || fallback;
+    } catch (e) {
+        console.error('Error parsing JSON:', e);
+        return fallback;
+    }
+}
+
+// Parse les données du contexte Django
+const volumeLabels = safeJsonParse({{ volume_labels|safe }}, ['2024-01-01', '2024-01-02', '2024-01-03']);
+const volumeLegitimate = safeJsonParse({{ volume_legitimate|safe }}, [10, 15, 20]);
+const volumeFraud = safeJsonParse({{ volume_fraud|safe }}, [1, 2, 3]);
+const fraudTrendLabels = safeJsonParse({{ fraud_trend_labels|safe }}, volumeLabels);
+const fraudTrendData = safeJsonParse({{ fraud_trend_data|safe }}, [1, 2, 3]);
+const detectionRateData = safeJsonParse({{ detection_rate_data|safe }}, [80, 85, 90]);
+const transactionTypeLabels = safeJsonParse({{ transaction_type_labels|safe }}, ['TRF', 'RT', 'RCD']);
+const transactionTypeData = safeJsonParse({{ transaction_type_data|safe }}, [10, 20, 30]);
+const transactionStatusData = safeJsonParse({{ transaction_status_data|safe }}, [80, 15, 5]);
+const bankLabels = safeJsonParse({{ bank_labels|safe }}, ['BANK1', 'BANK2', 'BANK3']);
+const bankTransactionData = safeJsonParse({{ bank_transaction_data|safe }}, [100, 80, 60]);
+const hourlyActivityData = safeJsonParse({{ hourly_activity_data|safe }}, Array(24).fill(0));
+
+// Volume Time Series Chart
+const volumeCtx = document.getElementById('volumeTimeSeriesChart');
+if (volumeCtx) {
+    const volumeChart = new Chart(volumeCtx, {
+        type: 'line',
+        data: {
+            labels: volumeLabels,
+            datasets: [{
+                label: 'Transactions Légitimes',
+                data: volumeLegitimate,
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Transactions Frauduleuses',
+                data: volumeFraud,
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Fraud Trends Chart
+const fraudCtx = document.getElementById('fraudTrendsChart');
+if (fraudCtx) {
+    const fraudChart = new Chart(fraudCtx, {
+        type: 'bar',
+        data: {
+            labels: fraudTrendLabels,
+            datasets: [{
+                label: 'Fraudes Détectées',
+                data: fraudTrendData,
+                backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                borderColor: '#dc3545',
+                borderWidth: 1
+            }, {
+                label: 'Taux de Détection (%)',
+                data: detectionRateData.slice(0, fraudTrendLabels.length),
+                type: 'line',
+                borderColor: '#fd7e14',
+                backgroundColor: 'rgba(253, 126, 20, 0.1)',
+                yAxisID: 'y1',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    position: 'left',
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    grid: {
+                        drawOnChartArea: false,
+                    },
+                    max: 100
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Transaction Types Chart
+const typesCtx = document.getElementById('transactionTypesChart');
+if (typesCtx) {
+    const typesChart = new Chart(typesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: transactionTypeLabels,
+            datasets: [{
+                data: transactionTypeData,
+                backgroundColor: ['#28a745', '#fd7e14', '#007bff', '#6f42c1', '#dc3545'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+// Transaction Status Chart
+const statusCtx = document.getElementById('transactionStatusChart');
+if (statusCtx) {
+    const statusChart = new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Réussies', 'Échouées', 'En Attente'],
+            datasets: [{
+                data: transactionStatusData,
+                backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+// Bank Performance Chart - Fix: utiliser 'bar' au lieu de 'horizontalBar'
+const bankCtx = document.getElementById('bankPerformanceChart');
+if (bankCtx) {
+    const bankChart = new Chart(bankCtx, {
+        type: 'bar',
+        data: {
+            labels: bankLabels,
+            datasets: [{
+                label: 'Transactions',
+                data: bankTransactionData,
+                backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                borderColor: '#28a745',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Activity Heatmap (simplified as bar chart)
+const heatmapCtx = document.getElementById('activityHeatmapChart');
+if (heatmapCtx) {
+    const heatmapChart = new Chart(heatmapCtx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => i + 'h'),
+            datasets: [{
+                label: 'Activité par Heure',
+                data: hourlyActivityData,
+                backgroundColor: function(context) {
+                    const value = context.parsed.y;
+                    const max = Math.max(...hourlyActivityData);
+                    const intensity = max > 0 ? value / max : 0;
+                    return `rgba(40, 167, 69, ${Math.max(0.1, intensity)})`;
+                },
+                borderColor: '#28a745',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Rest of your JavaScript functions...
+function showBokehCharts() {
+    const bokehContainer = document.getElementById('bokehChartsContainer');
+    const chartjsContainer = document.getElementById('chartjsContainer');
+    
+    if (bokehContainer) bokehContainer.style.display = 'block';
+    if (chartjsContainer) chartjsContainer.style.display = 'none';
+    
+    // Update buttons
+    const bokehBtn = document.querySelector('button[onclick="showBokehCharts()"]');
+    const chartjsBtn = document.querySelector('button[onclick="showChartJS()"]');
+    
+    if (bokehBtn) {
+        bokehBtn.classList.add('active', 'btn-primary');
+        bokehBtn.classList.remove('btn-outline-primary');
+    }
+    
+    if (chartjsBtn) {
+        chartjsBtn.classList.remove('active', 'btn-primary');
+        chartjsBtn.classList.add('btn-outline-secondary');
+    }
+}
+
+function showChartJS() {
+    const bokehContainer = document.getElementById('bokehChartsContainer');
+    const chartjsContainer = document.getElementById('chartjsContainer');
+    
+    if (bokehContainer) bokehContainer.style.display = 'none';
+    if (chartjsContainer) chartjsContainer.style.display = 'block';
+    
+    // Update buttons
+    const bokehBtn = document.querySelector('button[onclick="showBokehCharts()"]');
+    const chartjsBtn = document.querySelector('button[onclick="showChartJS()"]');
+    
+    if (chartjsBtn) {
+        chartjsBtn.classList.add('active', 'btn-primary');
+        chartjsBtn.classList.remove('btn-outline-secondary');
+    }
+    
+    if (bokehBtn) {
+        bokehBtn.classList.remove('active', 'btn-primary');
+        bokehBtn.classList.add('btn-outline-primary');
+    }
+}
+
+// Autres fonctions (updateAnalytics, refreshAnalytics, etc.)
+function updateAnalytics() {
+    console.log('Updating analytics...');
+    // Votre code existant
+}
+
+function refreshAnalytics() {
+    showAlert('Actualisation des analytics...', 'info');
+    // Votre code existant
+}
+
+function exportReport() {
+    const timeRange = document.getElementById('timeRange').value;
+    window.location.href = `/api/analytics/export/?time_range=${timeRange}`;
+}
+
+function generateInsights() {
+    showAlert('Génération des insights IA...', 'info');
+    // Votre code existant
+}
+
+function toggleFraudDetails() {
+    showAlert('Affichage des détails de fraude', 'info');
+}
+
+function refreshAlerts() {
+    // Votre code existant
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 5000);
+}
+
+// Handle custom date range
+const timeRangeSelect = document.getElementById('timeRange');
+if (timeRangeSelect) {
+    timeRangeSelect.addEventListener('change', function() {
+        const customRanges = document.querySelectorAll('#customDateRange, #customDateRange2');
+        if (this.value === 'custom') {
+            customRanges.forEach(el => el.style.display = 'block');
+        } else {
+            customRanges.forEach(el => el.style.display = 'none');
+        }
+    });
+}
+
+// Auto-refresh alerts every 30 seconds
+setInterval(refreshAlerts, 30000);
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Analytics page loaded');
+    refreshAlerts();
+});
+</script>
+{% endblock %}
+

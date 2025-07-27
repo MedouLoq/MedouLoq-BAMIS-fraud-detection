@@ -1,0 +1,485 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ bank.bank_code }} - Détail Banque - BAMIS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .metric-card {
+        transition: transform 0.2s;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+    }
+    .chart-container {
+        position: relative;
+        height: 400px;
+        margin-bottom: 20px;
+    }
+    .client-row:hover {
+        background-color: #f8f9fa;
+    }
+    .fraud-badge {
+        font-size: 0.75em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'bank_list' %}">Banques</a></li>
+                            <li class="breadcrumb-item active">{{ bank.bank_code }}</li>
+                        </ol>
+                    </nav>
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-university me-2"></i>
+                        Banque {{ bank.bank_code }}
+                        {% if bank.bank_name %}
+                        <small class="text-muted">- {{ bank.bank_name }}</small>
+                        {% endif %}
+                    </h1>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshBankStats()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Actualiser
+                    </button>
+                    <a href="{% url 'bank_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métriques principales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card metric-card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                    <h4 class="mb-0">{{ bank.total_transactions }}</h4>
+                    <small>Transactions Totales</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card metric-card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-coins fa-2x mb-2"></i>
+                    <h4 class="mb-0">{{ bank.total_amount|floatformat:0 }}</h4>
+                    <small>MRU Traités</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card metric-card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x mb-2"></i>
+                    <h4 class="mb-0">{{ unique_clients_count }}</h4>
+                    <small>Clients Uniques</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card metric-card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                    <h4 class="mb-0">{{ bank.fraud_rate|floatformat:1 }}%</h4>
+                    <small>Taux de Fraude</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Évolution des Transactions (30 derniers jours)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>
+                        Pattern Horaire
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques détaillées -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Types de Transactions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Nombre</th>
+                                    <th>Montant</th>
+                                    <th>Fraudes</th>
+                                    <th>Taux</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for type_data in transaction_types %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ type_data.trx_type }}</span>
+                                    </td>
+                                    <td>{{ type_data.count }}</td>
+                                    <td>{{ type_data.total_amount|floatformat:0 }} MRU</td>
+                                    <td>
+                                        <span class="badge bg-danger">{{ type_data.fraud_count }}</span>
+                                    </td>
+                                    <td>
+                                        {% widthratio type_data.fraud_count type_data.count 100 as fraud_rate %}
+                                        <span class="{% if fraud_rate > 5 %}text-danger{% elif fraud_rate > 2 %}text-warning{% else %}text-success{% endif %}">
+                                            {{ fraud_rate|floatformat:1 }}%
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exchange-alt me-2"></i>
+                        Répartition des Transactions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <h4 class="text-primary">{{ intra_bank_transactions }}</h4>
+                                <small class="text-muted">Intra-banque</small>
+                                <div class="progress mt-2" style="height: 6px;">
+                                    {% widthratio intra_bank_transactions total_transactions 100 as intra_percent %}
+                                    <div class="progress-bar bg-primary" style="width: {{ intra_percent }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-info">{{ inter_bank_transactions }}</h4>
+                            <small class="text-muted">Inter-banques</small>
+                            <div class="progress mt-2" style="height: 6px;">
+                                {% widthratio inter_bank_transactions total_transactions 100 as inter_percent %}
+                                <div class="progress-bar bg-info" style="width: {{ inter_percent }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top clients -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        Top Clients par Volume
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Client ID</th>
+                                    <th>Transactions</th>
+                                    <th>Montant Total</th>
+                                    <th>Fraudes</th>
+                                    <th>Taux Fraude</th>
+                                    <th>Niveau Risque</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for client_data in top_clients %}
+                                <tr class="client-row">
+                                    <td>
+                                        <strong>{{ client_data.client_id }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ client_data.transaction_count }}</span>
+                                    </td>
+                                    <td>{{ client_data.total_amount|floatformat:0 }} MRU</td>
+                                    <td>
+                                        {% if client_data.fraud_count > 0 %}
+                                        <span class="badge bg-danger fraud-badge">{{ client_data.fraud_count }}</span>
+                                        {% else %}
+                                        <span class="badge bg-success fraud-badge">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if client_data.transaction_count > 0 %}
+                                            {% widthratio client_data.fraud_count client_data.transaction_count 100 as client_fraud_rate %}
+                                            <span class="{% if client_fraud_rate > 5 %}text-danger{% elif client_fraud_rate > 2 %}text-warning{% else %}text-success{% endif %}">
+                                                {{ client_fraud_rate|floatformat:1 }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">0%</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if client_data.client_obj %}
+                                        <span class="badge 
+                                            {% if client_data.client_obj.claude_risk_level == 'SUSPECT' %}bg-danger
+                                            {% elif client_data.client_obj.claude_risk_level == 'WATCH' %}bg-warning
+                                            {% else %}bg-success{% endif %}">
+                                            {{ client_data.client_obj.claude_risk_level }}
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'client_detail' client_data.client_id %}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions récentes -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Transactions Récentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Montant</th>
+                                    <th>Type</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'transaction_detail' transaction.id %}" 
+                                           class="text-decoration-none">
+                                            {{ transaction.trx|truncatechars:15 }}
+                                        </a>
+                                    </td>
+                                    <td>{{ transaction.montant|floatformat:0 }} MRU</td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ transaction.trx_type }}</span>
+                                    </td>
+                                    <td>
+                                        {% if transaction.ml_is_fraud %}
+                                        <span class="badge bg-danger">FRAUDE</span>
+                                        {% else %}
+                                        <span class="badge bg-success">OK</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'transaction_list' %}?bank={{ bank.bank_code }}" 
+                           class="btn btn-outline-primary btn-sm">
+                            Voir toutes les transactions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Fraudes Récentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if fraud_transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Montant</th>
+                                    <th>Priorité</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fraud in fraud_transactions %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'transaction_detail' fraud.id %}" 
+                                           class="text-decoration-none">
+                                            {{ fraud.trx|truncatechars:15 }}
+                                        </a>
+                                    </td>
+                                    <td>{{ fraud.montant|floatformat:0 }} MRU</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if fraud.claude_priority_level == 'URGENT' %}bg-danger
+                                            {% elif fraud.claude_priority_level == 'HIGH' %}bg-warning
+                                            {% else %}bg-info{% endif %}">
+                                            {{ fraud.claude_priority_level|default:"MEDIUM" }}
+                                        </span>
+                                    </td>
+                                    <td>{{ fraud.uploaded_at|date:"d/m H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <p class="text-muted">Aucune fraude récente détectée</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Graphique d'évolution des transactions
+const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+const transactionChart = new Chart(transactionCtx, {
+    type: 'line',
+    data: {
+        labels: {{ time_series_labels|safe }},
+        datasets: [{
+            label: 'Transactions',
+            data: {{ time_series_counts|safe }},
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Fraudes',
+            data: {{ time_series_frauds|safe }},
+            borderColor: '#dc3545',
+            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top'
+            }
+        }
+    }
+});
+
+// Graphique pattern horaire
+const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+const hourlyChart = new Chart(hourlyCtx, {
+    type: 'bar',
+    data: {
+        labels: Array.from({length: 24}, (_, i) => i + 'h'),
+        datasets: [{
+            label: 'Transactions',
+            data: {{ hourly_pattern|safe }},
+            backgroundColor: 'rgba(0, 123, 255, 0.6)',
+            borderColor: '#007bff',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+function refreshBankStats() {
+    // Simuler l'actualisation
+    location.reload();
+}
+</script>
+{% endblock %}
+

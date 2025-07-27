@@ -1,0 +1,847 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Analytics - BAMIS Fraud Detection Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-hero {
+        background: var(--bamis-gradient-hero);
+        color: white;
+        padding: var(--space-12) var(--space-8);
+        border-radius: var(--radius-2xl);
+        margin-bottom: var(--space-12);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+    
+    .analytics-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: var(--space-4);
+        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        font-family: var(--bamis-font-display);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        margin-bottom: var(--space-8);
+    }
+    
+    .filter-section {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+        box-shadow: var(--bamis-shadow-lg);
+    }
+    
+    .filter-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--bamis-gray-800);
+        margin-bottom: var(--space-4);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+    
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    .filter-label {
+        font-weight: 600;
+        color: var(--bamis-gray-700);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .filter-select {
+        padding: var(--space-3) var(--space-4);
+        border: 2px solid var(--bamis-gray-300);
+        border-radius: var(--radius-lg);
+        background: white;
+        font-size: 0.875rem;
+        transition: var(--transition-normal);
+    }
+    
+    .filter-select:focus {
+        outline: none;
+        border-color: var(--bamis-green-primary);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: var(--space-3);
+        justify-content: flex-end;
+    }
+    
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-6);
+        margin-bottom: var(--space-12);
+    }
+    
+    .stat-card {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        padding: var(--space-6);
+        box-shadow: var(--bamis-shadow-lg);
+        transition: var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--bamis-gradient-primary);
+    }
+    
+    .stat-card.orange::before {
+        background: var(--bamis-gradient-secondary);
+    }
+    
+    .stat-card.danger::before {
+        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    }
+    
+    .stat-card.info::before {
+        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--bamis-shadow-xl);
+    }
+    
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-4);
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        background: var(--bamis-gradient-primary);
+        box-shadow: var(--bamis-shadow-md);
+    }
+    
+    .stat-card.orange .stat-icon {
+        background: var(--bamis-gradient-secondary);
+    }
+    
+    .stat-card.danger .stat-icon {
+        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    }
+    
+    .stat-card.info .stat-icon {
+        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--bamis-gray-800);
+        line-height: 1;
+        margin-bottom: var(--space-2);
+        font-family: var(--bamis-font-display);
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--bamis-gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: var(--space-3);
+    }
+    
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-full);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .trend-up {
+        background: rgba(244, 67, 54, 0.1);
+        color: var(--bamis-danger);
+        border: 1px solid var(--bamis-danger);
+    }
+    
+    .trend-down {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--bamis-green-dark);
+        border: 1px solid var(--bamis-green-primary);
+    }
+    
+    .trend-stable {
+        background: rgba(158, 158, 158, 0.1);
+        color: var(--bamis-gray-600);
+        border: 1px solid var(--bamis-gray-400);
+    }
+    
+    .charts-section {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        padding: var(--space-8);
+        margin-bottom: var(--space-8);
+        box-shadow: var(--bamis-shadow-lg);
+        transition: var(--transition-normal);
+    }
+    
+    .charts-section:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bamis-shadow-xl);
+    }
+    
+    .charts-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        padding-bottom: var(--space-4);
+        border-bottom: 2px solid var(--bamis-gray-200);
+    }
+    
+    .charts-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--bamis-gray-800);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+    
+    .charts-actions {
+        display: flex;
+        gap: var(--space-2);
+    }
+    
+    .bokeh-container {
+        min-height: 400px;
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        box-shadow: var(--bamis-shadow-sm);
+    }
+    
+    .insights-section {
+        margin-bottom: var(--space-8);
+    }
+    
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-4);
+    }
+    
+    .insight-card {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        box-shadow: var(--bamis-shadow-md);
+        transition: var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .insight-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+    }
+    
+    .insight-card.warning::before {
+        background: var(--bamis-gradient-secondary);
+    }
+    
+    .insight-card.danger::before {
+        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    }
+    
+    .insight-card.info::before {
+        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+    }
+    
+    .insight-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bamis-shadow-lg);
+    }
+    
+    .insight-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
+    }
+    
+    .insight-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: white;
+    }
+    
+    .insight-card.warning .insight-icon {
+        background: var(--bamis-gradient-secondary);
+    }
+    
+    .insight-card.danger .insight-icon {
+        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    }
+    
+    .insight-card.info .insight-icon {
+        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+    }
+    
+    .insight-title {
+        font-weight: 700;
+        color: var(--bamis-gray-800);
+        font-size: 1rem;
+    }
+    
+    .insight-message {
+        color: var(--bamis-gray-700);
+        margin-bottom: var(--space-3);
+        line-height: 1.5;
+    }
+    
+    .insight-recommendation {
+        font-size: 0.875rem;
+        color: var(--bamis-gray-600);
+        font-style: italic;
+        padding: var(--space-2) var(--space-3);
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: var(--radius-md);
+        border-left: 3px solid var(--bamis-green-primary);
+    }
+    
+    .data-table-section {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        overflow: hidden;
+        margin-bottom: var(--space-8);
+        box-shadow: var(--bamis-shadow-lg);
+    }
+    
+    .table-header {
+        background: var(--bamis-gradient-primary);
+        color: white;
+        padding: var(--space-6);
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--bamis-gray-800);
+        padding: var(--space-4);
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .data-table td {
+        padding: var(--space-4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        vertical-align: middle;
+    }
+    
+    .data-table tr:hover {
+        background: rgba(76, 175, 80, 0.05);
+    }
+    
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bamis-glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-2xl);
+        z-index: 100;
+    }
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(76, 175, 80, 0.1);
+        border-left: 4px solid var(--bamis-green-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 1200px) {
+        .stats-overview {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .analytics-hero {
+            padding: var(--space-8) var(--space-4);
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .charts-header {
+            flex-direction: column;
+            gap: var(--space-4);
+            align-items: flex-start;
+        }
+        
+        .insights-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Bokeh CSS -->
+{{ bokeh_script|safe }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="analytics-hero animate-fade-in-up">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <i class="fas fa-chart-line"></i>
+                Analytics Avancées
+            </h1>
+            <p class="hero-subtitle">
+                Analyse approfondie des données de fraude avec visualisations interactives
+            </p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filter-section animate-slide-in-right">
+        <div class="filter-title">
+            <i class="fas fa-filter"></i>
+            Filtres d'Analyse
+        </div>
+        
+        <form method="GET" id="filterForm">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Période</label>
+                    <select name="date_range" class="filter-select">
+                        {% for value, label in date_range_options %}
+                        <option value="{{ value }}" {% if current_filters.date_range == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Type de Transaction</label>
+                    <select name="transaction_type" class="filter-select">
+                        {% for value, label in transaction_type_options %}
+                        <option value="{{ value }}" {% if current_filters.transaction_type == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Filtre Fraude</label>
+                    <select name="fraud_filter" class="filter-select">
+                        {% for value, label in fraud_filter_options %}
+                        <option value="{{ value }}" {% if current_filters.fraud_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Appliquer les Filtres
+                </button>
+                <a href="{% url 'analytics' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-undo"></i>
+                    Réinitialiser
+                </a>
+                <a href="{% url 'export_analytics_data' %}?{{ request.GET.urlencode }}" class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Exporter CSV
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Statistiques Générales -->
+    <div class="stats-overview animate-fade-in-up">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_transactions|floatformat:0 }}</div>
+            <div class="stat-label">Total Transactions</div>
+            <div class="stat-trend trend-{{ transaction_trend }}">
+                <i class="fas fa-arrow-{% if transaction_trend == 'up' %}up{% elif transaction_trend == 'down' %}down{% else %}right{% endif %}"></i>
+                {{ transaction_trend|title }}
+            </div>
+        </div>
+        
+        <div class="stat-card orange">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ fraud_transactions|floatformat:0 }}</div>
+            <div class="stat-label">Fraudes Détectées</div>
+            <div class="stat-trend trend-{{ fraud_trend }}">
+                <i class="fas fa-arrow-{% if fraud_trend == 'up' %}up{% elif fraud_trend == 'down' %}down{% else %}right{% endif %}"></i>
+                {{ fraud_rate|floatformat:1 }}%
+            </div>
+        </div>
+        
+        <div class="stat-card info">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-euro-sign"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_amount|floatformat:0 }} MRU</div>
+            <div class="stat-label">Montant Total</div>
+            <div class="stat-trend trend-stable">
+                <i class="fas fa-chart-line"></i>
+                {{ avg_transaction_amount|floatformat:0 }} MRU moy.
+            </div>
+        </div>
+        
+        <div class="stat-card danger">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ fraud_amount|floatformat:0 }} MRU</div>
+            <div class="stat-label">Montant Frauduleux</div>
+            <div class="stat-trend trend-{% if fraud_amount > 0 %}up{% else %}stable{% endif %}">
+                <i class="fas fa-{% if fraud_amount > 0 %}exclamation-triangle{% else %}check{% endif %}"></i>
+                {% if fraud_amount > 0 %}Risque{% else %}Sécurisé{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques Bokeh -->
+    <div class="charts-section animate-slide-in-right">
+        <div class="charts-header">
+            <div class="charts-title">
+                <i class="fas fa-chart-area"></i>
+                Visualisations Interactives
+            </div>
+            <div class="charts-actions">
+                <button class="btn btn-outline-primary btn-sm" onclick="refreshCharts()">
+                    <i class="fas fa-sync-alt"></i>
+                    Actualiser
+                </button>
+            </div>
+        </div>
+        
+        <div class="bokeh-container" id="bokehContainer">
+            {{ bokeh_div|safe }}
+        </div>
+    </div>
+
+    <!-- Insights et Recommandations -->
+    {% if insights %}
+    <div class="insights-section animate-fade-in-up">
+        <h2 class="section-title mb-4">
+            <i class="fas fa-lightbulb"></i>
+            Insights et Recommandations
+        </h2>
+        
+        <div class="insights-grid">
+            {% for insight in insights %}
+            <div class="insight-card {{ insight.type }}">
+                <div class="insight-header">
+                    <div class="insight-icon">
+                        <i class="fas fa-{% if insight.type == 'warning' %}exclamation-triangle{% elif insight.type == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                    </div>
+                    <div class="insight-title">{{ insight.title }}</div>
+                </div>
+                <div class="insight-message">{{ insight.message }}</div>
+                <div class="insight-recommendation">
+                    <strong>Recommandation:</strong> {{ insight.recommendation }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tableau des Types de Transactions -->
+    <div class="data-table-section animate-slide-in-right">
+        <div class="table-header">
+            <i class="fas fa-table"></i>
+            Analyse par Type de Transaction
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Total</th>
+                    <th>Fraudes</th>
+                    <th>Taux de Fraude</th>
+                    <th>Montant Total</th>
+                    <th>Montant Moyen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type_stat in transaction_types %}
+                <tr>
+                    <td>
+                        <strong>{{ type_stat.trx_type }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--bamis-gray-500);">
+                            {% if type_stat.trx_type == 'TRF' %}Transfert
+                            {% elif type_stat.trx_type == 'RT' %}Retrait
+                            {% elif type_stat.trx_type == 'RCD' %}Recharge
+                            {% elif type_stat.trx_type == 'PF' %}Paiement
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td><strong>{{ type_stat.count }}</strong></td>
+                    <td>
+                        <span class="{% if type_stat.fraud_count > 0 %}text-bamis-orange{% else %}text-bamis-green{% endif %}">
+                            <strong>{{ type_stat.fraud_count }}</strong>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="{% if type_stat.fraud_rate > 10 %}fraud-rate-high{% elif type_stat.fraud_rate > 5 %}fraud-rate-medium{% else %}fraud-rate-low{% endif %}">
+                            <strong>{{ type_stat.fraud_rate|floatformat:1 }}%</strong>
+                        </span>
+                    </td>
+                    <td>{{ type_stat.total_amount|floatformat:0 }} MRU</td>
+                    <td>{{ type_stat.avg_amount|floatformat:0 }} MRU</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Clients à Haut Risque -->
+    {% if high_risk_clients %}
+    <div class="data-table-section animate-fade-in-up">
+        <div class="table-header">
+            <i class="fas fa-user-shield"></i>
+            Clients à Haut Risque
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>Transactions</th>
+                    <th>Fraudes</th>
+                    <th>Taux de Fraude</th>
+                    <th>Montant Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in high_risk_clients %}
+                <tr>
+                    <td>
+                        <strong>{{ client.client_id }}</strong>
+                    </td>
+                    <td>{{ client.total_transactions }}</td>
+                    <td>
+                        <span class="text-bamis-orange">
+                            <strong>{{ client.fraud_count }}</strong>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="fraud-rate-high">
+                            <strong>{{ client.fraud_rate|floatformat:1 }}%</strong>
+                        </span>
+                    </td>
+                    <td>{{ client.total_amount|floatformat:0 }} MRU</td>
+                    <td>
+                        <a href="{% url 'client_detail' client.client_id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                            Voir Détails
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit form on filter change
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterSelects = document.querySelectorAll('.filter-select');
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                // Auto-submit après un court délai pour permettre les changements multiples
+                setTimeout(() => {
+                    document.getElementById('filterForm').submit();
+                }, 500);
+            });
+        });
+        
+        // Animation d'entrée pour les éléments
+        const cards = document.querySelectorAll('.stat-card, .charts-section, .insight-card, .data-table-section');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    
+    function refreshCharts() {
+        const container = document.getElementById('bokehContainer');
+        const overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = '<div class="spinner"></div>';
+        
+        container.style.position = 'relative';
+        container.appendChild(overlay);
+        
+        // Simuler le rechargement (dans une vraie implémentation, cela ferait un appel AJAX)
+        setTimeout(() => {
+            overlay.remove();
+            location.reload();
+        }, 2000);
+    }
+    
+    // Gestion responsive des graphiques Bokeh
+    window.addEventListener('resize', function() {
+        // Redimensionner les graphiques Bokeh si nécessaire
+        if (window.Bokeh && window.Bokeh.documents) {
+            window.Bokeh.documents.forEach(doc => {
+                doc.models.forEach(model => {
+                    if (model.type === 'Plot') {
+                        model.trigger('resize');
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
+

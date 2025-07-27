@@ -1,0 +1,725 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - BAMIS Fraud Detection Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-hero {
+        background: var(--bamis-gradient-hero);
+        color: white;
+        padding: var(--space-12) var(--space-8);
+        border-radius: var(--radius-2xl);
+        margin-bottom: var(--space-12);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+    
+    .dashboard-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: var(--space-4);
+        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        font-family: var(--bamis-font-display);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        margin-bottom: var(--space-8);
+    }
+    
+    .quick-actions {
+        display: flex;
+        gap: var(--space-4);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-4) var(--space-6);
+        background: var(--bamis-glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-xl);
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        transition: var(--transition-normal);
+        box-shadow: var(--bamis-glass-shadow);
+    }
+    
+    .quick-action-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+        box-shadow: var(--bamis-shadow-xl);
+        color: white;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--space-8);
+        margin-bottom: var(--space-12);
+    }
+    
+    .activity-card {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--bamis-shadow-lg);
+        overflow: hidden;
+        transition: var(--transition-normal);
+    }
+    
+    .activity-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--bamis-shadow-xl);
+    }
+    
+    .activity-header {
+        background: var(--bamis-gradient-primary);
+        color: white;
+        padding: var(--space-6);
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+    
+    .activity-list {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 0;
+    }
+    
+    .activity-item {
+        padding: var(--space-5);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: var(--transition-fast);
+        position: relative;
+    }
+    
+    .activity-item:hover {
+        background: rgba(76, 175, 80, 0.05);
+        transform: translateX(4px);
+    }
+    
+    .activity-item.fraud {
+        border-left: 4px solid var(--bamis-orange-primary);
+        background: rgba(255, 152, 0, 0.05);
+    }
+    
+    .activity-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-2);
+    }
+    
+    .activity-id {
+        font-weight: 700;
+        color: var(--bamis-gray-800);
+        font-family: var(--bamis-font-mono);
+    }
+    
+    .activity-amount {
+        font-weight: 800;
+        color: var(--bamis-green-primary);
+        font-size: 1.125rem;
+    }
+    
+    .activity-amount.fraud {
+        color: var(--bamis-orange-primary);
+    }
+    
+    .activity-details {
+        font-size: 0.875rem;
+        color: var(--bamis-gray-600);
+        margin-bottom: var(--space-2);
+    }
+    
+    .activity-time {
+        font-size: 0.75rem;
+        color: var(--bamis-gray-500);
+        font-style: italic;
+    }
+    
+    .alerts-card {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--bamis-shadow-lg);
+        overflow: hidden;
+        transition: var(--transition-normal);
+    }
+    
+    .alerts-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--bamis-shadow-xl);
+    }
+    
+    .alerts-header {
+        background: var(--bamis-gradient-secondary);
+        color: white;
+        padding: var(--space-6);
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+    
+    .alert-item {
+        padding: var(--space-4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: var(--transition-fast);
+    }
+    
+    .alert-item:hover {
+        background: rgba(255, 152, 0, 0.05);
+    }
+    
+    .alert-item.urgent {
+        background: rgba(244, 67, 54, 0.1);
+        border-left: 4px solid var(--bamis-danger);
+    }
+    
+    .alert-item.high {
+        background: rgba(255, 152, 0, 0.1);
+        border-left: 4px solid var(--bamis-orange-primary);
+    }
+    
+    .alert-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-2);
+    }
+    
+    .alert-id {
+        font-weight: 700;
+        font-size: 0.875rem;
+        font-family: var(--bamis-font-mono);
+    }
+    
+    .alert-amount {
+        font-weight: 800;
+        color: var(--bamis-danger);
+        font-size: 1rem;
+    }
+    
+    .alert-summary {
+        font-size: 0.875rem;
+        color: var(--bamis-gray-700);
+        margin-bottom: var(--space-3);
+        line-height: 1.4;
+    }
+    
+    .alert-actions {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+    }
+    
+    .btn-view {
+        background: var(--bamis-gradient-primary);
+        color: white;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: var(--transition-normal);
+    }
+    
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bamis-shadow-md);
+        color: white;
+    }
+    
+    .priority-badge {
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-full);
+        font-size: 0.625rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .priority-urgent {
+        background: rgba(244, 67, 54, 0.1);
+        color: var(--bamis-danger);
+        border: 1px solid var(--bamis-danger);
+    }
+    
+    .priority-high {
+        background: rgba(255, 152, 0, 0.1);
+        color: var(--bamis-orange-dark);
+        border: 1px solid var(--bamis-orange-primary);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: var(--space-12);
+        color: var(--bamis-gray-500);
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: var(--space-4);
+        opacity: 0.5;
+    }
+    
+    .insights-card {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--bamis-shadow-lg);
+        overflow: hidden;
+        margin-bottom: var(--space-8);
+        transition: var(--transition-normal);
+    }
+    
+    .insights-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--bamis-shadow-xl);
+    }
+    
+    .insights-header {
+        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+        color: white;
+        padding: var(--space-6);
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+    
+    .claude-analysis {
+        padding: var(--space-6);
+    }
+    
+    .analysis-content {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--bamis-gray-700);
+        margin-bottom: var(--space-4);
+    }
+    
+    .stats-table-card {
+        background: var(--bamis-gradient-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bamis-glass-border);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--bamis-shadow-lg);
+        overflow: hidden;
+        transition: var(--transition-normal);
+    }
+    
+    .stats-table-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--bamis-shadow-xl);
+    }
+    
+    .stats-header {
+        background: var(--bamis-gradient-primary);
+        color: white;
+        padding: var(--space-6);
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+    
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .stats-table th {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--bamis-gray-800);
+        padding: var(--space-4);
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stats-table td {
+        padding: var(--space-4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        vertical-align: middle;
+    }
+    
+    .stats-table tr:hover {
+        background: rgba(76, 175, 80, 0.05);
+    }
+    
+    .type-label {
+        font-weight: 700;
+        color: var(--bamis-gray-800);
+    }
+    
+    .type-description {
+        font-size: 0.75rem;
+        color: var(--bamis-gray-500);
+        font-style: italic;
+    }
+    
+    .fraud-rate-high {
+        color: var(--bamis-danger);
+        font-weight: 700;
+    }
+    
+    .fraud-rate-medium {
+        color: var(--bamis-orange-primary);
+        font-weight: 600;
+    }
+    
+    .fraud-rate-low {
+        color: var(--bamis-green-primary);
+        font-weight: 600;
+    }
+    
+    @media (max-width: 1200px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-6);
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-hero {
+            padding: var(--space-8) var(--space-4);
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+        }
+        
+        .quick-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .quick-action-btn {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="dashboard-hero animate-fade-in-up">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Bienvenue, {{ user.get_full_name|default:user.username }} 🚀
+            </h1>
+            <p class="hero-subtitle">
+                Plateforme BAMIS de détection de fraude bancaire - {{ user.get_role_display }}
+            </p>
+            
+           
+            <div class="quick-actions">
+                
+                <a href="{% url 'upload_csv' %}" class="quick-action-btn">
+                    <i class="fas fa-upload"></i>
+                    Importer CSV
+                </a>
+              
+                
+                <a href="{% url 'transaction_list' %}" class="quick-action-btn">
+                    <i class="fas fa-credit-card"></i>
+                    Transactions
+                </a>
+                
+                <a href="{% url 'client_list' %}" class="quick-action-btn">
+                    <i class="fas fa-users"></i>
+                    Clients
+                </a>
+                
+                
+                <a href="{% url 'analytics' %}" class="quick-action-btn">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics
+                </a>
+                
+            </div>
+         
+        </div>
+    </div>
+
+    <!-- Métriques principales -->
+    <div class="metrics-grid animate-slide-in-right">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="metric-value">{{ total_transactions|floatformat:0 }}</div>
+            <div class="metric-label">Transactions Totales</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                +{{ total_transactions|floatformat:0 }} ce mois
+            </div>
+        </div>
+        
+        <div class="metric-card orange">
+            <div class="metric-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="metric-value">{{ fraud_transactions|floatformat:0 }}</div>
+            <div class="metric-label">Fraudes Détectées</div>
+            <div class="metric-change {% if fraud_rate > 5 %}negative{% else %}positive{% endif %}">
+                <i class="fas fa-{% if fraud_rate > 5 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                {{ fraud_rate|floatformat:1 }}% du total
+            </div>
+        </div>
+        
+        <div class="metric-card info">
+            <div class="metric-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="metric-value">{{ total_clients|floatformat:0 }}</div>
+            <div class="metric-label">Clients Uniques</div>
+            <div class="metric-change positive">
+                <i class="fas fa-check"></i>
+                Profils analysés
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-euro-sign"></i>
+            </div>
+            <div class="metric-value">{{ total_amount|floatformat:0 }} MRU</div>
+            <div class="metric-label">Montant Total</div>
+            <div class="metric-change {% if fraud_amount > 0 %}negative{% else %}positive{% endif %}">
+                <i class="fas fa-{% if fraud_amount > 0 %}exclamation-triangle{% else %}shield-alt{% endif %}"></i>
+                {{ fraud_amount|floatformat:0 }} MRU frauduleux
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Activité récente -->
+        <div class="activity-card animate-fade-in-up">
+            <div class="activity-header">
+                <i class="fas fa-history"></i>
+                Activité Récente
+            </div>
+            
+            <div class="activity-list">
+                {% for transaction in recent_transactions %}
+                <div class="activity-item {% if transaction.ml_is_fraud %}fraud{% endif %}">
+                    <div class="activity-meta">
+                        <span class="activity-id">{{ transaction.trx }}</span>
+                        <span class="activity-amount {% if transaction.ml_is_fraud %}fraud{% endif %}">
+                            {{ transaction.formatted_amount }}
+                        </span>
+                    </div>
+                    <div class="activity-details">
+                        <strong>{{ transaction.client_i }}</strong> → <strong>{{ transaction.client_b }}</strong>
+                        <span class="badge bg-{% if transaction.ml_is_fraud %}warning{% else %}success{% endif %} ms-2">
+                            {{ transaction.get_trx_type_display }}
+                        </span>
+                        {% if transaction.ml_is_fraud %}
+                            <span class="badge bg-danger ms-1">FRAUDE</span>
+                        {% endif %}
+                    </div>
+                    <div class="activity-time">
+                        <i class="fas fa-clock"></i>
+                        {{ transaction.uploaded_at|timesince }} ago
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p>Aucune transaction récente</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Alertes prioritaires -->
+        <div class="alerts-card animate-slide-in-right">
+            <div class="alerts-header">
+                <i class="fas fa-bell"></i>
+                Alertes Prioritaires
+            </div>
+            
+            {% for fraud in urgent_frauds %}
+            <div class="alert-item {{ fraud.claude_priority_level|lower }}">
+                <div class="alert-header">
+                    <span class="alert-id">{{ fraud.trx }}</span>
+                    <span class="alert-amount">{{ fraud.formatted_amount }}</span>
+                </div>
+                
+                {% if fraud.claude_explanation %}
+                <div class="alert-summary">
+                    {{ fraud.claude_explanation|truncatewords:15 }}
+                </div>
+                {% endif %}
+                
+                <div class="alert-actions">
+                    <a href="{% url 'transaction_detail' fraud.id %}" class="btn-view">
+                        <i class="fas fa-eye"></i>
+                        Voir Détails
+                    </a>
+                    {% if fraud.claude_priority_level %}
+                    <span class="priority-badge priority-{{ fraud.claude_priority_level|lower }}">
+                        {{ fraud.get_claude_priority_level_display }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <p>Aucune alerte prioritaire</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Insights quotidiens -->
+    {% if today_insight %}
+    <div class="insights-card animate-fade-in-up">
+        <div class="insights-header">
+            <i class="fas fa-robot"></i>
+            Insights IA du Jour
+        </div>
+        <div class="claude-analysis">
+            <div class="analysis-content">
+                {{ today_insight.claude_summary|linebreaks }}
+            </div>
+            <small class="text-muted">
+                <i class="fas fa-calendar"></i>
+                Généré le {{ today_insight.created_at|date:"d/m/Y à H:i" }}
+            </small>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Statistiques par type -->
+    <div class="stats-table-card animate-slide-in-right">
+        <div class="stats-header">
+            <i class="fas fa-chart-pie"></i>
+            Répartition par Type de Transaction
+        </div>
+        
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Total</th>
+                    <th>Fraudes</th>
+                    <th>Taux de Fraude</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type_stat in transaction_types %}
+                <tr>
+                    <td>
+                        <div class="type-label">{{ type_stat.trx_type }}</div>
+                        <div class="type-description">
+                            {% if type_stat.trx_type == 'TRF' %}Transfert
+                            {% elif type_stat.trx_type == 'RT' %}Retrait
+                            {% elif type_stat.trx_type == 'RCD' %}Recharge
+                            {% elif type_stat.trx_type == 'PF' %}Paiement
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td><strong>{{ type_stat.count }}</strong></td>
+                    <td>
+                        <span class="{% if type_stat.fraud_count > 0 %}text-bamis-orange{% else %}text-bamis-green{% endif %}">
+                            <strong>{{ type_stat.fraud_count }}</strong>
+                        </span>
+                    </td>
+                    <td>
+                        {% widthratio type_stat.fraud_count type_stat.count 100 as fraud_rate %}
+                        <span class="{% if fraud_rate > 10 %}fraud-rate-high{% elif fraud_rate > 5 %}fraud-rate-medium{% else %}fraud-rate-low{% endif %}">
+                            <strong>{{ fraud_rate|floatformat:1 }}%</strong>
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animation d'entrée pour les cartes
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.stat-card, .card, .recent-activity, .priority-alerts');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+    
+    // Auto-refresh des données toutes les 30 secondes
+    setInterval(function() {
+        // Ici on pourrait ajouter un refresh AJAX des statistiques
+        console.log('Auto-refresh des données...');
+    }, 30000);
+</script>
+{% endblock %}
+

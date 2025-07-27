@@ -1,0 +1,655 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Client {{ client.client_id }} - BAMIS Fraud Detection{% endblock %}
+
+{% block extra_css %}
+<style>
+    .custom-alert {
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    position: relative;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.custom-alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 0.5rem 0 0 0.5rem;
+    background: currentColor;
+    opacity: 0.3;
+}
+
+.custom-alert:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-alert.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.custom-alert.alert-success::before {
+    background: linear-gradient(180deg, #28a745, #20c997);
+}
+
+.custom-alert.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-color: #ffeaa7;
+}
+
+.custom-alert.alert-warning::before {
+    background: linear-gradient(180deg, #ffc107, #fd7e14);
+}
+
+.custom-alert.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.custom-alert.alert-danger::before {
+    background: linear-gradient(180deg, #dc3545, #e83e8c);
+}
+
+.custom-alert.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+.custom-alert.alert-info::before {
+    background: linear-gradient(180deg, #17a2b8, #6f42c1);
+}
+
+/* Optional: Add icons support */
+.custom-alert .alert-icon {
+    display: inline-block;
+    margin-right: 0.75rem;
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+
+/* Dismissible alerts */
+.custom-alert.alert-dismissible {
+    padding-right: 3rem;
+}
+
+.custom-alert .alert-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.custom-alert .alert-close:hover {
+    opacity: 1;
+}
+    .client-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    
+    .client-header.risk-watch {
+        background: linear-gradient(135deg, #fd7e14 0%, #ff8c42 100%);
+    }
+    
+    .client-header.risk-suspect {
+        background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+    }
+    
+    .metric-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        border-left: 4px solid #28a745;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .metric-card.warning {
+        border-left-color: #fd7e14;
+    }
+    
+    .metric-card.danger {
+        border-left-color: #dc3545;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .transaction-item {
+        border-left: 4px solid #28a745;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .transaction-item.fraud {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+    
+    .transaction-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .risk-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+    
+    .risk-normal { background-color: #28a745; }
+    .risk-watch { background-color: #fd7e14; }
+    .risk-suspect { background-color: #dc3545; }
+    
+    .pattern-badge {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        margin: 0.25rem;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Client Header -->
+    <div class="client-header risk-{{ client.claude_risk_level|lower }}">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="fas fa-user-circle"></i> Client {{ client.client_id }}
+                </h1>
+                <p class="mb-0 opacity-75">
+                    Actif depuis {{ client.first_transaction_date|date:"d/m/Y" }} • 
+                    Dernière activité {{ client.last_transaction_date|date:"d/m/Y" }}
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex flex-column align-items-md-end">
+                    <span class="badge bg-light text-dark fs-6 mb-2">
+                        <span class="risk-indicator risk-{{ client.claude_risk_level|lower }}"></span>
+                        {{ client.get_claude_risk_level_display }}
+                    </span>
+                    <button class="btn btn-light btn-sm" onclick="analyzeClient()">
+                        <i class="fas fa-brain"></i> Nouvelle Analyse IA
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-primary mb-1">{{ client.total_transactions }}</h3>
+                        <p class="text-muted mb-0">Transactions Total</p>
+                    </div>
+                    <i class="fas fa-exchange-alt fa-2x text-primary opacity-25"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-success mb-1">{{ client.total_amount|floatformat:0 }} MRU</h3>
+                        <p class="text-muted mb-0">Volume Total</p>
+                    </div>
+                    <i class="fas fa-euro-sign fa-2x text-success opacity-25"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card {% if client.fraud_transactions_count > 0 %}danger{% endif %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-danger mb-1">{{ client.fraud_transactions_count }}</h3>
+                        <p class="text-muted mb-0">Fraudes Détectées</p>
+                    </div>
+                    <i class="fas fa-exclamation-triangle fa-2x text-danger opacity-25"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="metric-card {% if client.fraud_rate > 5 %}warning{% endif %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-warning mb-1">{{ client.fraud_rate|floatformat:1 }}%</h3>
+                        <p class="text-muted mb-0">Taux de Fraude</p>
+                    </div>
+                    <i class="fas fa-percentage fa-2x text-warning opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Transaction Time Series Chart -->
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-chart-line text-primary"></i> 
+                    Évolution des Transactions (30 derniers jours)
+                </h5>
+                <canvas id="transactionTimeSeriesChart" height="100"></canvas>
+            </div>
+
+            <!-- Hourly Activity Pattern -->
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-clock text-primary"></i> 
+                    Pattern d'Activité par Heure
+                </h5>
+                <canvas id="hourlyPatternChart" height="80"></canvas>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-primary"></i> 
+                        Transactions Récentes
+                    </h5>
+                    <a href="{% url 'transaction_list' %}?client={{ client.client_id }}" class="btn btn-sm btn-outline-primary">
+                        Voir Toutes
+                    </a>
+                </div>
+                
+                {% for transaction in transactions %}
+                <div class="transaction-item {% if transaction.ml_is_fraud %}fraud{% endif %}">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <strong>{{ transaction.trx }}</strong><br>
+                            <small class="text-muted">{{ transaction.uploaded_at|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="badge bg-secondary">{{ transaction.get_trx_type_display }}</span>
+                        </div>
+                        <div class="col-md-2">
+                            <strong class="text-success">{{ transaction.formatted_amount }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            {% if transaction.client_i == client.client_id %}
+                                <i class="fas fa-arrow-right text-danger"></i> {{ transaction.client_b }}
+                            {% else %}
+                                <i class="fas fa-arrow-left text-success"></i> {{ transaction.client_i }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-2 text-end">
+                            {% if transaction.ml_is_fraud %}
+                                <span class="badge bg-danger">FRAUDE</span>
+                            {% else %}
+                                <span class="badge bg-success">OK</span>
+                            {% endif %}
+                            <a href="{% url 'transaction_detail' transaction.id %}" class="btn btn-sm btn-outline-primary ms-1">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">Aucune transaction récente</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Risk Assessment -->
+            {% if client.claude_risk_assessment %}
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-robot text-primary"></i> 
+                    Évaluation IA
+                </h5>
+                <div class="custom-alert alert-{{ client.risk_level_class }} border-0">
+                    <p class="mb-2">{{ client.claude_risk_assessment }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i> 
+                        Analysé le {{ client.claude_last_analyzed|date:"d/m/Y à H:i" }}
+                    </small>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Behavioral Patterns -->
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-brain text-primary"></i> 
+                    Patterns Comportementaux
+                </h5>
+                
+                <div class="mb-3">
+                    <label class="form-label small text-muted">MONTANTS</label>
+                    <div>
+                        <span class="pattern-badge">Moyen: {{ client.avg_transaction_amount|floatformat:0 }} MRU</span>
+                        <span class="pattern-badge">Max: {{ client.max_transaction_amount|floatformat:0 }} MRU</span>
+                        <span class="pattern-badge">Min: {{ client.min_transaction_amount|floatformat:0 }} MRU</span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label small text-muted">ACTIVITÉ</label>
+                    <div>
+                        {% if client.most_active_hour %}
+                        <span class="pattern-badge">Heure préférée: {{ client.most_active_hour }}h</span>
+                        {% endif %}
+                        {% if client.weekend_transactions > 0 %}
+                        <span class="pattern-badge">Weekend: {{ client.weekend_transactions }} trans.</span>
+                        {% endif %}
+                        {% if client.night_transactions > 0 %}
+                        <span class="pattern-badge">Nuit: {{ client.night_transactions }} trans.</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label small text-muted">BANQUES</label>
+                    <div>
+                        <span class="pattern-badge">{{ client.unique_banks_used }} banques utilisées</span>
+                        {% if client.self_transfers_count > 0 %}
+                        <span class="pattern-badge">{{ client.self_transfers_count }} auto-transferts</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label small text-muted">FIABILITÉ</label>
+                    <div>
+                        <span class="pattern-badge">Échecs: {{ client.failure_rate|floatformat:1 }}%</span>
+                        {% if client.most_common_transaction_type %}
+                        <span class="pattern-badge">Type favori: {{ client.get_most_common_transaction_type_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Distribution -->
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-chart-pie text-primary"></i> 
+                    Répartition des Transactions
+                </h5>
+                <canvas id="transactionDistributionChart" height="200"></canvas>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-tools text-primary"></i> 
+                    Actions Rapides
+                </h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="exportClientData()">
+                        <i class="fas fa-download"></i> Exporter Données
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="flagClient()">
+                        <i class="fas fa-flag"></i> Signaler Client
+                    </button>
+                    <button class="btn btn-outline-info" onclick="generateReport()">
+                        <i class="fas fa-file-alt"></i> Rapport Détaillé
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Parse data safely
+const timeSeriesLabels = {{ time_series_labels|safe }};
+const timeSeriesCounts = {{ time_series_counts|safe }};
+const timeSeriesFrauds = {{ time_series_frauds|safe }};
+const hourlyPatternData = {{ hourly_pattern|safe }};
+
+// Time Series Chart
+const timeSeriesCtx = document.getElementById('transactionTimeSeriesChart').getContext('2d');
+const timeSeriesChart = new Chart(timeSeriesCtx, {
+    type: 'line',
+    data: {
+        labels: timeSeriesLabels,
+        datasets: [{
+            label: 'Transactions',
+            data: timeSeriesCounts,
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Fraudes',
+            data: timeSeriesFrauds,
+            borderColor: '#dc3545',
+            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            }
+        }
+    }
+});
+
+// Hourly Pattern Chart
+const hourlyCtx = document.getElementById('hourlyPatternChart').getContext('2d');
+const hourlyChart = new Chart(hourlyCtx, {
+    type: 'bar',
+    data: {
+        labels: Array.from({length: 24}, (_, i) => i + 'h'),
+        datasets: [{
+            label: 'Transactions par Heure',
+            data: hourlyPatternData,
+            backgroundColor: 'rgba(40, 167, 69, 0.8)',
+            borderColor: '#28a745',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            }
+        }
+    }
+});
+
+// Transaction Distribution Chart
+const distributionCtx = document.getElementById('transactionDistributionChart').getContext('2d');
+const distributionChart = new Chart(distributionCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Envoyées', 'Reçues'],
+        datasets: [{
+            data: [{{ client.total_transactions_sent }}, {{ client.total_transactions_received }}],
+            backgroundColor: ['#28a745', '#fd7e14'],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Functions
+function analyzeClient() {
+    if (confirm('Lancer une nouvelle analyse IA pour ce client ?')) {
+        showAlert('Analyse en cours...', 'info');
+        
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        
+        fetch(`/api/clients/{{ client.client_id }}/analyze/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Analyse IA terminée', 'success');
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showAlert('Erreur: ' + (data.error || 'Erreur inconnue'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Erreur de connexion', 'danger');
+        });
+    }
+}
+
+function exportClientData() {
+    window.location.href = `/api/clients/{{ client.client_id }}/export/`;
+}
+
+function flagClient() {
+    const reason = prompt('Raison du signalement:');
+    if (reason) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        
+        fetch(`/api/clients/{{ client.client_id }}/flag/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({reason: reason})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Client signalé', 'warning');
+            } else {
+                showAlert('Erreur: ' + (data.error || 'Erreur inconnue'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Erreur de connexion', 'danger');
+        });
+    }
+}
+
+function generateReport() {
+    showAlert('Génération du rapport...', 'info');
+    window.open(`/api/clients/{{ client.client_id }}/report/`, '_blank');
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}
+

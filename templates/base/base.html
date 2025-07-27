@@ -1,0 +1,513 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BAMIS - Fraud Detection Platform{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/image.png' %}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- BAMIS Theme CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bamis-enhanced.css' %}">
+    
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* Additional inline styles for enhanced UX */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+        
+        .page-transition.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+    .navbar-brand-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-right: 0.75rem;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    position: relative;
+    overflow: hidden;
+    padding: 4px; /* Add some padding */
+}
+
+/* Style the image inside the logo container */
+.navbar-brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* or 'cover' if you want to fill the entire space */
+    border-radius: 8px; /* Slightly smaller radius than container */
+}
+
+.navbar-brand-logo::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    z-index: 1; /* Ensure the shine effect is above the image */
+}
+
+.navbar-brand:hover .navbar-brand-logo::before {
+    animation: shine 0.6s ease;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #FF8C00 0%, #FFB74D 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #FF4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        .sidebar-nav {
+            background: linear-gradient(180deg, #2E7D32 0%, #1B5E20 100%);
+            min-height: calc(100vh - 76px);
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.75rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .sidebar-nav .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-content {
+            background: #FAFAFA;
+            min-height: calc(100vh - 76px);
+            padding: 2rem;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .status-indicator.online {
+            background: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+        }
+        
+        .status-indicator.offline {
+            background: #F44336;
+        }
+        
+        .status-indicator.warning {
+            background: #FF9800;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+                <div class="navbar-brand-logo"><img src="{% static 'images/image.png' %}" alt=""></div>
+                <div>
+                    <div style="font-size: 1.5rem; font-weight: 700; line-height: 1;">BAMIS</div>
+                    <div style="font-size: 0.75rem; color: #757575; font-weight: 500;">Fraud Detection</div>
+                </div>
+            </a>
+            
+            <!-- Toggle button for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'transaction' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'transaction_list' %}">
+                            <i class="fas fa-exchange-alt me-2"></i>Transactions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'client' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'client_list' %}">
+                            <i class="fas fa-users me-2"></i>Clients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'analytics' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'analytics' %}">
+                            <i class="fas fa-chart-line me-2"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'bank' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'bank_list' %}">
+                            <i class="fas fa-university me-2"></i>Banques
+                        </a>
+                    </li>
+                   
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'upload' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'upload_csv' %}">
+                            <i class="fas fa-upload me-2"></i>Upload Data
+                        </a>
+                    </li>
+               
+                </ul>
+                
+                <!-- Right side navigation -->
+                <ul class="navbar-nav">
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="width: 320px;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span>Notifications</span>
+                                <span class="badge bg-primary">3</span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-start py-2" href="#">
+                                    <div class="status-indicator warning me-2 mt-1"></div>
+                                    <div>
+                                        <div class="fw-semibold">Fraude détectée</div>
+                                        <small class="text-muted">Transaction suspecte - Client C12345</small>
+                                        <small class="text-muted d-block">Il y a 5 minutes</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-start py-2" href="#">
+                                    <div class="status-indicator online me-2 mt-1"></div>
+                                    <div>
+                                        <div class="fw-semibold">Modèle mis à jour</div>
+                                        <small class="text-muted">Nouveau modèle ML déployé</small>
+                                        <small class="text-muted d-block">Il y a 1 heure</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-start py-2" href="#">
+                                    <div class="status-indicator online me-2 mt-1"></div>
+                                    <div>
+                                        <div class="fw-semibold">Rapport généré</div>
+                                        <small class="text-muted">Rapport mensuel disponible</small>
+                                        <small class="text-muted d-block">Il y a 2 heures</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-center" href="#">Voir toutes les notifications</a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- User Menu -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar">
+                                {{ user.first_name.0|default:user.username.0|upper }}
+                            </div>
+                            <span class="d-none d-md-inline">{{ user.get_full_name|default:user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-header">
+                                <div class="fw-semibold">{{ user.get_full_name|default:user.username }}</div>
+                                <small class="text-muted">{{ user.email }}</small>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">
+                                <i class="fas fa-user me-2"></i>Profil
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Paramètres
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-question-circle me-2"></i>Aide
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="page-transition" id="mainContent">
+        {% if messages %}
+            <div class="container-fluid mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="navbar-brand-logo me-3">B</div>
+                        <div>
+                            <h5 class="mb-1">BAMIS Fraud Detection</h5>
+                            <p class="mb-0 opacity-75">Plateforme avancée de détection de fraude bancaire</p>
+                        </div>
+                    </div>
+                    <p class="opacity-75">
+                        Propulsé par l'intelligence artificielle et l'apprentissage automatique 
+                        pour protéger vos transactions financières.
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="mb-3">Liens Rapides</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'dashboard' %}" class="text-white-50 text-decoration-none">Dashboard</a></li>
+                        <li><a href="{% url 'analytics' %}" class="text-white-50 text-decoration-none">Analytics</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Documentation</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="mb-3">Système</h6>
+                    <ul class="list-unstyled">
+                        <li class="d-flex align-items-center mb-2">
+                            <div class="status-indicator online me-2"></div>
+                            <span class="text-white-50">Système opérationnel</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <div class="status-indicator online me-2"></div>
+                            <span class="text-white-50">API Claude active</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-2">
+                            <div class="status-indicator online me-2"></div>
+                            <span class="text-white-50">ML Model v2.1</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 opacity-25">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 opacity-75">
+                        © 2024 BAMIS. Tous droits réservés.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 opacity-75">
+                        Version 2.1.0 • Dernière mise à jour: {{ "now"|date:"d/m/Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- CSRF Token for AJAX -->
+    {% csrf_token %}
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Page transition effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainContent = document.getElementById('mainContent');
+            setTimeout(() => {
+                mainContent.classList.add('loaded');
+            }, 100);
+        });
+        
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add loading state to buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('button[type="submit"], .btn-loading')) {
+                const btn = e.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Chargement...';
+                btn.disabled = true;
+                
+                // Re-enable after 3 seconds (fallback)
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 3000);
+            }
+        });
+        
+        // Real-time clock in footer
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fr-FR');
+            const clockElement = document.getElementById('realTimeClock');
+            if (clockElement) {
+                clockElement.textContent = timeString;
+            }
+        }
+        
+        // Update clock every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+        
+        // Global AJAX setup for CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Set CSRF token for all AJAX requests
+        const csrftoken = getCookie('csrftoken');
+        if (window.fetch) {
+            const originalFetch = window.fetch;
+            window.fetch = function(url, options = {}) {
+                if (options.method && options.method.toUpperCase() !== 'GET') {
+                    options.headers = options.headers || {};
+                    options.headers['X-CSRFToken'] = csrftoken;
+                }
+                return originalFetch(url, options);
+            };
+        }
+    </script>
+    
+    <!-- Additional JavaScript -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
