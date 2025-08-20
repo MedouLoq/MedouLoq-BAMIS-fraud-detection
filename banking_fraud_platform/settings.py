@@ -40,7 +40,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # API Keys
-ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
+ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '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')
 
 
 # Application definition
