@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration Claude
 CLAUDE_API_KEY = getattr(settings, 'ANTHROPIC_API_KEY', os.getenv('ANTHROPIC_API_KEY'))
-CLAUDE_MODEL = "claude-3-sonnet-20240229"
+CLAUDE_MODEL = "claude-3-5-sonnet-20241022"
 CLAUDE_MAX_TOKENS = 1500
 CLAUDE_TEMPERATURE = 0.3
 
@@ -199,7 +199,7 @@ class ClaudeAnalyzer:
         context_parts.append(f"Client enregistré depuis: {client.created_at}")
         context_parts.append(f"Nombre total de transactions: {client.total_transactions}")
         context_parts.append(f"Montant total: {client.total_amount} MRU")
-        context_parts.append(f"Nombre de fraudes détectées: {client.fraud_count}")
+        context_parts.append(f"Nombre de fraudes détectées: {client.fraud_transactions_count}")  # ← Fixed this line
         context_parts.append(f"Taux de fraude: {client.fraud_rate:.2f}%")
         
         # Analyse des patterns
@@ -221,7 +221,6 @@ class ClaudeAnalyzer:
                 context_parts.append(f"⚠️ {recent_frauds} fraudes détectées dans les transactions récentes")
         
         return "\n".join(context_parts)
-    
     def _create_transaction_prompt(self, transaction, context: str) -> str:
         """Créer le prompt pour l'analyse de transaction"""
         
@@ -232,7 +231,7 @@ class ClaudeAnalyzer:
             amount = getattr(transaction, 'montant', 0)
         
         prompt = f"""
-Vous êtes un expert en détection de fraude bancaire pour la plateforme BAMIS. Analysez cette transaction pour détecter d'éventuelles fraudes.
+Vous êtes un expert en détection de fraude bancaire pour la plateforme BNM. Analysez cette transaction pour détecter d'éventuelles fraudes.
 
 DÉTAILS DE LA TRANSACTION:
 - ID: {transaction.trx}
@@ -269,13 +268,13 @@ Répondez UNIQUEMENT au format JSON suivant:
     def _create_client_prompt(self, client, context: str) -> str:
         """Créer le prompt pour l'analyse client"""
         prompt = f"""
-Vous êtes un expert en analyse de profils clients pour la détection de fraude bancaire BAMIS. Analysez ce profil client.
+Vous êtes un expert en analyse de profils clients pour la détection de fraude bancaire BNM. Analysez ce profil client.
 
 PROFIL CLIENT:
 - ID: {client.client_id}
 - Transactions totales: {client.total_transactions}
 - Montant total: {client.total_amount} MRU
-- Fraudes détectées: {client.fraud_count}
+- Fraudes détectées: {client.fraud_transactions_count}
 - Taux de fraude: {client.fraud_rate:.2f}%
 - Dernière activité: {client.last_transaction_date}
 
@@ -422,21 +421,22 @@ Répondez UNIQUEMENT au format JSON suivant:
         
         else:  # client
             fraud_rate = getattr(obj, 'fraud_rate', 0)
+            fraud_count = getattr(obj, 'fraud_transactions_count', 0)  # ← Added this line
             
             if fraud_rate > 10:
                 risk_level = "HIGH"
                 patterns = ["taux_fraude_élevé", "comportement_suspect"]
-                assessment = f"Client avec un taux de fraude de {fraud_rate:.1f}%. Profil à haut risque."
+                assessment = f"Client avec un taux de fraude de {fraud_rate:.1f}% ({fraud_count} fraudes détectées). Profil à haut risque."
                 recommendations = ["Surveillance renforcée", "Limitation des montants"]
             elif fraud_rate > 5:
                 risk_level = "MEDIUM"
                 patterns = ["taux_fraude_modéré"]
-                assessment = f"Client avec un taux de fraude de {fraud_rate:.1f}%. Surveillance recommandée."
+                assessment = f"Client avec un taux de fraude de {fraud_rate:.1f}% ({fraud_count} fraudes détectées). Surveillance recommandée."
                 recommendations = ["Surveillance régulière"]
             else:
                 risk_level = "LOW"
                 patterns = ["comportement_normal"]
-                assessment = f"Client avec un taux de fraude de {fraud_rate:.1f}%. Profil normal."
+                assessment = f"Client avec un taux de fraude de {fraud_rate:.1f}% ({fraud_count} fraudes détectées). Profil normal."
                 recommendations = []
             
             return {
@@ -450,7 +450,7 @@ Répondez UNIQUEMENT au format JSON suivant:
                 'claude_model': 'mock',
                 'analysis_type': 'client'
             }
-    
+
     def _generate_error_analysis(self, error_msg: str, analysis_type: str) -> Dict[str, Any]:
         """Générer une analyse d'erreur"""
         base_analysis = {

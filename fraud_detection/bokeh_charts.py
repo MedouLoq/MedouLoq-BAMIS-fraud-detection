@@ -1,5 +1,5 @@
 """
-Module pour la génération de graphiques Bokeh pour la plateforme BAMIS
+Module pour la génération de graphiques Bokeh pour la plateforme BNM
 """
 
 import pandas as pd
@@ -20,8 +20,8 @@ from bokeh.themes import Theme
 from datetime import datetime, timedelta
 import json
 
-# Couleurs BAMIS
-BAMIS_COLORS = {
+# Couleurs BNM
+BNM_COLORS = {
     'green_primary': '#4CAF50',
     'green_light': '#66BB6A',
     'green_dark': '#388E3C',
@@ -35,8 +35,8 @@ BAMIS_COLORS = {
     'black': '#000000'
 }
 
-# Thème BAMIS pour Bokeh
-BAMIS_THEME = Theme(json={
+# Thème BNM pour Bokeh
+BNM_THEME = Theme(json={
     "attrs": {
         "Figure": {
             "background_fill_color": "#FAFAFA",
@@ -74,10 +74,10 @@ BAMIS_THEME = Theme(json={
 })
 
 class BokehChartGenerator:
-    """Générateur de graphiques Bokeh pour la plateforme BAMIS"""
+    """Générateur de graphiques Bokeh pour la plateforme BNM"""
     
     def __init__(self):
-        self.theme = BAMIS_THEME
+        self.theme = BNM_THEME
         
     def create_transaction_volume_chart(self, transactions_df):
         """Créer un graphique de volume des transactions par jour"""
@@ -113,7 +113,7 @@ class BokehChartGenerator:
             ['normal_count', 'fraud_count'],
             x='date',
             width=timedelta(days=0.8),
-            color=[BAMIS_COLORS['green_primary'], BAMIS_COLORS['orange_primary']],
+            color=[BNM_COLORS['green_primary'], BNM_COLORS['orange_primary']],
             source=source,
             legend_label=['Transactions Normales', 'Fraudes Détectées']
         )
@@ -158,7 +158,7 @@ class BokehChartGenerator:
                 2 * np.pi * normal_transactions / total_transactions,
                 2 * np.pi * fraud_transactions / total_transactions
             ],
-            'color': [BAMIS_COLORS['green_primary'], BAMIS_COLORS['orange_primary']]
+            'color': [BNM_COLORS['green_primary'], BNM_COLORS['orange_primary']]
         }
         
         source = ColumnDataSource(data)
@@ -212,7 +212,7 @@ class BokehChartGenerator:
         p.quad(
             top=hist_normal, bottom=0,
             left=edges[:-1], right=edges[1:],
-            fill_color=BAMIS_COLORS['green_primary'],
+            fill_color=BNM_COLORS['green_primary'],
             line_color="white",
             alpha=0.7,
             legend_label="Transactions Normales"
@@ -222,7 +222,7 @@ class BokehChartGenerator:
         p.quad(
             top=hist_fraud, bottom=0,
             left=edges[:-1], right=edges[1:],
-            fill_color=BAMIS_COLORS['orange_primary'],
+            fill_color=BNM_COLORS['orange_primary'],
             line_color="white",
             alpha=0.7,
             legend_label="Fraudes"
@@ -322,7 +322,7 @@ class BokehChartGenerator:
             ['normal_count', 'fraud_count'],
             x='trx_type',
             width=0.6,
-            color=[BAMIS_COLORS['green_primary'], BAMIS_COLORS['orange_primary']],
+            color=[BNM_COLORS['green_primary'], BNM_COLORS['orange_primary']],
             source=source,
             legend_label=['Normales', 'Fraudes']
         )
@@ -375,7 +375,7 @@ class BokehChartGenerator:
         line = p.line(
             'datetime', 'fraud_rate',
             line_width=3,
-            color=BAMIS_COLORS['orange_primary'],
+            color=BNM_COLORS['orange_primary'],
             source=source,
             legend_label="Taux de Fraude (%)"
         )
@@ -384,7 +384,7 @@ class BokehChartGenerator:
         circles = p.circle(
             'datetime', 'fraud_rate',
             size=8,
-            color=BAMIS_COLORS['orange_primary'],
+            color=BNM_COLORS['orange_primary'],
             source=source
         )
         
@@ -457,7 +457,7 @@ class BokehChartGenerator:
             text_align="center",
             text_baseline="middle",
             text_font_size="14pt",
-            text_color=BAMIS_COLORS['gray']
+            text_color=BNM_COLORS['gray']
         )
         
         p.axis.visible = False

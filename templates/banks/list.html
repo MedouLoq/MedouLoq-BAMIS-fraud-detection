@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Banques - BAMIS{% endblock %}
+{% block title %}Banques - BNM{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-info text-white">
+            <div class="card stats-card text-white">
                 <div class="card-body text-center">
                     <i class="fas fa-exchange-alt fa-2x mb-2"></i>
                     <h4 class="mb-0">{{ total_bank_transactions|floatformat:0 }}</h4>
@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white">
+            <div class="card stats-card text-white">
                 <div class="card-body text-center">
                     <i class="fas fa-coins fa-2x mb-2"></i>
                     <h4 class="mb-0">{{ total_bank_amount|floatformat:0 }} MRU</h4>
@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-warning text-white">
+            <div class="card stats-card text-white">
                 <div class="card-body text-center">
                     <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
                     <h4 class="mb-0">{{ avg_fraud_rate|floatformat:1 }}%</h4>

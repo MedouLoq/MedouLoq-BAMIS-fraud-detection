@@ -193,7 +193,7 @@ class Client(models.Model):
     last_transaction_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+    fraud_rate = models.FloatField(default=0.0, verbose_name="Taux de Fraude (%)")
     class Meta:
         ordering = ['-fraud_transactions_count', '-total_transactions_sent']
         verbose_name = "Client"
@@ -223,12 +223,7 @@ class Client(models.Model):
             return 0
         return (self.failed_transactions_count / self.total_transactions_sent) * 100
     
-    @property
-    def fraud_rate(self):
-        """Taux de fraude"""
-        if self.total_transactions == 0:
-            return 0
-        return (self.fraud_transactions_count / self.total_transactions) * 100
+    
     
     @property
     def risk_level_class(self):

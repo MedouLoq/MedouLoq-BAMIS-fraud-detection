@@ -1,12 +1,12 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Dashboard - BAMIS Fraud Detection Platform{% endblock %}
+{% block title %}Dashboard - BNM Fraud Detection Platform{% endblock %}
 
 {% block extra_css %}
 <style>
     .dashboard-hero {
-        background: var(--bamis-gradient-hero);
+        background: var(--BNM-gradient-hero);
         color: white;
         padding: var(--space-12) var(--space-8);
         border-radius: var(--radius-2xl);
@@ -37,7 +37,7 @@
         font-weight: 900;
         margin-bottom: var(--space-4);
         text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        font-family: var(--bamis-font-display);
+        font-family: var(--BNM-font-display);
     }
     
     .hero-subtitle {
@@ -58,22 +58,22 @@
         align-items: center;
         gap: var(--space-2);
         padding: var(--space-4) var(--space-6);
-        background: var(--bamis-glass-bg);
+        background: var(--BNM-glass-bg);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-xl);
         text-decoration: none;
         color: white;
         font-weight: 600;
         transition: var(--transition-normal);
-        box-shadow: var(--bamis-glass-shadow);
+        box-shadow: var(--BNM-glass-shadow);
     }
     
     .quick-action-btn:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: translateY(-3px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
         color: white;
     }
     
@@ -85,23 +85,23 @@
     }
     
     .activity-card {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
         overflow: hidden;
         transition: var(--transition-normal);
     }
     
     .activity-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
     }
     
     .activity-header {
-        background: var(--bamis-gradient-primary);
+        background: var(--BNM-gradient-primary);
         color: white;
         padding: var(--space-6);
         font-weight: 700;
@@ -130,7 +130,7 @@
     }
     
     .activity-item.fraud {
-        border-left: 4px solid var(--bamis-orange-primary);
+        border-left: 4px solid var(--BNM-orange-primary);
         background: rgba(255, 152, 0, 0.05);
     }
     
@@ -143,50 +143,50 @@
     
     .activity-id {
         font-weight: 700;
-        color: var(--bamis-gray-800);
-        font-family: var(--bamis-font-mono);
+        color: var(--BNM-gray-800);
+        font-family: var(--BNM-font-mono);
     }
     
     .activity-amount {
         font-weight: 800;
-        color: var(--bamis-green-primary);
+        color: var(--BNM-green-primary);
         font-size: 1.125rem;
     }
     
     .activity-amount.fraud {
-        color: var(--bamis-orange-primary);
+        color: var(--BNM-orange-primary);
     }
     
     .activity-details {
         font-size: 0.875rem;
-        color: var(--bamis-gray-600);
+        color: var(--BNM-gray-600);
         margin-bottom: var(--space-2);
     }
     
     .activity-time {
         font-size: 0.75rem;
-        color: var(--bamis-gray-500);
+        color: var(--BNM-gray-500);
         font-style: italic;
     }
     
     .alerts-card {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
         overflow: hidden;
         transition: var(--transition-normal);
     }
     
     .alerts-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
     }
     
     .alerts-header {
-        background: var(--bamis-gradient-secondary);
+        background: var(--BNM-gradient-secondary);
         color: white;
         padding: var(--space-6);
         font-weight: 700;
@@ -208,12 +208,12 @@
     
     .alert-item.urgent {
         background: rgba(244, 67, 54, 0.1);
-        border-left: 4px solid var(--bamis-danger);
+        border-left: 4px solid var(--BNM-danger);
     }
     
     .alert-item.high {
         background: rgba(255, 152, 0, 0.1);
-        border-left: 4px solid var(--bamis-orange-primary);
+        border-left: 4px solid var(--BNM-orange-primary);
     }
     
     .alert-header {
@@ -226,18 +226,18 @@
     .alert-id {
         font-weight: 700;
         font-size: 0.875rem;
-        font-family: var(--bamis-font-mono);
+        font-family: var(--BNM-font-mono);
     }
     
     .alert-amount {
         font-weight: 800;
-        color: var(--bamis-danger);
+        color: var(--BNM-danger);
         font-size: 1rem;
     }
     
     .alert-summary {
         font-size: 0.875rem;
-        color: var(--bamis-gray-700);
+        color: var(--BNM-gray-700);
         margin-bottom: var(--space-3);
         line-height: 1.4;
     }
@@ -249,7 +249,7 @@
     }
     
     .btn-view {
-        background: var(--bamis-gradient-primary);
+        background: var(--BNM-gradient-primary);
         color: white;
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-lg);
@@ -263,7 +263,7 @@
     
     .btn-view:hover {
         transform: translateY(-2px);
-        box-shadow: var(--bamis-shadow-md);
+        box-shadow: var(--BNM-shadow-md);
         color: white;
     }
     
@@ -278,20 +278,20 @@
     
     .priority-urgent {
         background: rgba(244, 67, 54, 0.1);
-        color: var(--bamis-danger);
-        border: 1px solid var(--bamis-danger);
+        color: var(--BNM-danger);
+        border: 1px solid var(--BNM-danger);
     }
     
     .priority-high {
         background: rgba(255, 152, 0, 0.1);
-        color: var(--bamis-orange-dark);
-        border: 1px solid var(--bamis-orange-primary);
+        color: var(--BNM-orange-dark);
+        border: 1px solid var(--BNM-orange-primary);
     }
     
     .empty-state {
         text-align: center;
         padding: var(--space-12);
-        color: var(--bamis-gray-500);
+        color: var(--BNM-gray-500);
     }
     
     .empty-icon {
@@ -301,12 +301,12 @@
     }
     
     .insights-card {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
         overflow: hidden;
         margin-bottom: var(--space-8);
         transition: var(--transition-normal);
@@ -314,11 +314,11 @@
     
     .insights-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
     }
     
     .insights-header {
-        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+        background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
         color: white;
         padding: var(--space-6);
         font-weight: 700;
@@ -335,28 +335,28 @@
     .analysis-content {
         font-size: 1rem;
         line-height: 1.6;
-        color: var(--bamis-gray-700);
+        color: var(--BNM-gray-700);
         margin-bottom: var(--space-4);
     }
     
     .stats-table-card {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
         overflow: hidden;
         transition: var(--transition-normal);
     }
     
     .stats-table-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
     }
     
     .stats-header {
-        background: var(--bamis-gradient-primary);
+        background: var(--BNM-gradient-primary);
         color: white;
         padding: var(--space-6);
         font-weight: 700;
@@ -373,7 +373,7 @@
     
     .stats-table th {
         background: rgba(76, 175, 80, 0.1);
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
         padding: var(--space-4);
         text-align: left;
         font-weight: 700;
@@ -394,27 +394,27 @@
     
     .type-label {
         font-weight: 700;
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
     }
     
     .type-description {
         font-size: 0.75rem;
-        color: var(--bamis-gray-500);
+        color: var(--BNM-gray-500);
         font-style: italic;
     }
     
     .fraud-rate-high {
-        color: var(--bamis-danger);
+        color: var(--BNM-danger);
         font-weight: 700;
     }
     
     .fraud-rate-medium {
-        color: var(--bamis-orange-primary);
+        color: var(--BNM-orange-primary);
         font-weight: 600;
     }
     
     .fraud-rate-low {
-        color: var(--bamis-green-primary);
+        color: var(--BNM-green-primary);
         font-weight: 600;
     }
     
@@ -465,7 +465,7 @@
                 Bienvenue, {{ user.get_full_name|default:user.username }} 🚀
             </h1>
             <p class="hero-subtitle">
-                Plateforme BAMIS de détection de fraude bancaire - {{ user.get_role_display }}
+                Plateforme BNM de détection de fraude bancaire - {{ user.get_role_display }}
             </p>
             
            
@@ -680,7 +680,7 @@
                     </td>
                     <td><strong>{{ type_stat.count }}</strong></td>
                     <td>
-                        <span class="{% if type_stat.fraud_count > 0 %}text-bamis-orange{% else %}text-bamis-green{% endif %}">
+                        <span class="{% if type_stat.fraud_count > 0 %}text-BNM-orange{% else %}text-BNM-green{% endif %}">
                             <strong>{{ type_stat.fraud_count }}</strong>
                         </span>
                     </td>

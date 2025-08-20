@@ -1,10 +1,10 @@
-# BAMIS Enhanced Banking Fraud Detection Platform
+# BNM Enhanced Banking Fraud Detection Platform
 
-![BAMIS Logo](static/images/bamis-logo.png)
+![BNM Logo](static/images/BNM-logo.png)
 
 ## 🏦 Overview
 
-The BAMIS Enhanced Banking Fraud Detection Platform is a comprehensive, AI-powered solution designed to detect, analyze, and prevent banking fraud in real-time. Built with Django and enhanced with modern web technologies, this platform provides banking institutions with professional-grade fraud detection capabilities.
+The BNM Enhanced Banking Fraud Detection Platform is a comprehensive, AI-powered solution designed to detect, analyze, and prevent banking fraud in real-time. Built with Django and enhanced with modern web technologies, this platform provides banking institutions with professional-grade fraud detection capabilities.
 
 ## ✨ Key Features
 
@@ -45,7 +45,7 @@ The BAMIS Enhanced Banking Fraud Detection Platform is a comprehensive, AI-power
 - Detailed transaction analysis
 
 ### 🎨 **Professional Design**
-- BAMIS brand colors and styling
+- BNM brand colors and styling
 - Responsive design for all devices
 - Modern, banking-professional interface
 - Intuitive user experience
@@ -58,7 +58,7 @@ The BAMIS Enhanced Banking Fraud Detection Platform is a comprehensive, AI-power
 - **ML Framework**: Scikit-learn, Pandas
 - **Frontend**: Bootstrap 5.3.0, Chart.js, Font Awesome
 - **Charts**: Plotly.js for interactive visualizations
-- **Styling**: Custom BAMIS theme with CSS3
+- **Styling**: Custom BNM theme with CSS3
 
 ## 📋 Requirements
 
@@ -112,7 +112,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 ANTHROPIC_API_KEY=your-anthropic-api-key-here
 
 # Database (for production)
-DATABASE_URL=postgresql://user:password@localhost:5432/bamis_fraud_db
+DATABASE_URL=postgresql://user:password@localhost:5432/BNM_fraud_db
 ```
 
 ### 5. Database Setup
@@ -200,11 +200,11 @@ trx,montant,trx_type,trx_time,client_i,client_b,bank_i,bank_b,etat,mls
 - Analyze transaction patterns
 - Generate client reports
 
-## 🎨 BAMIS Branding
+## 🎨 BNM Branding
 
 ### Color Scheme
-- **Primary Green**: `#2E7D32` (BAMIS brand green)
-- **Secondary Orange**: `#FF8C00` (BAMIS brand orange)
+- **Primary Green**: `#2E7D32` (BNM brand green)
+- **Secondary Orange**: `#FF8C00` (BNM brand orange)
 - **Success**: `#4CAF50`
 - **Warning**: `#FF9800`
 - **Danger**: `#F44336`
@@ -261,8 +261,8 @@ All API endpoints require authentication. Use Django's built-in authentication o
 
 ### Docker Deployment
 ```bash
-docker build -t bamis-fraud-detection .
-docker run -p 8000:8000 bamis-fraud-detection
+docker build -t BNM-fraud-detection .
+docker run -p 8000:8000 BNM-fraud-detection
 ```
 
 ### Production Checklist
@@ -345,8 +345,8 @@ docker run -p 8000:8000 bamis-fraud-detection
 4. Add appropriate tests
 
 ### Styling Customization
-1. Edit `static/css/bamis-theme.css`
-2. Maintain BAMIS brand consistency
+1. Edit `static/css/BNM-theme.css`
+2. Maintain BNM brand consistency
 3. Test responsive design
 4. Update color variables
 
@@ -391,11 +391,11 @@ Logs are stored in `logs/` directory:
 
 ## 📄 License
 
-This project is proprietary software developed for BAMIS. All rights reserved.
+This project is proprietary software developed for BNM. All rights reserved.
 
 ## 👥 Contributors
 
-- **Development Team**: BAMIS Technology Division
+- **Development Team**: BNM Technology Division
 - **AI Integration**: Machine Learning Team
 - **Design**: UX/UI Design Team
 - **Testing**: Quality Assurance Team
@@ -403,13 +403,13 @@ This project is proprietary software developed for BAMIS. All rights reserved.
 ## 📞 Contact
 
 For technical support or questions:
-- **Email**: support@bamis.com
-- **Documentation**: https://docs.bamis.com/fraud-detection
-- **Support Portal**: https://support.bamis.com
+- **Email**: support@BNM.com
+- **Documentation**: https://docs.BNM.com/fraud-detection
+- **Support Portal**: https://support.BNM.com
 
 ---
 
-**© 2024 BAMIS. All rights reserved.**
+**© 2024 BNM. All rights reserved.**
 
 *Powered by artificial intelligence and machine learning for next-generation fraud detection.*
 

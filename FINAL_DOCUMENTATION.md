@@ -1,16 +1,16 @@
-# BAMIS Enhanced Fraud Detection Platform - Documentation Finale
+# BNM Enhanced Fraud Detection Platform - Documentation Finale
 
 ## 🎯 Résumé du Projet
 
-La plateforme BAMIS de détection de fraude bancaire a été entièrement améliorée avec un design professionnel, des animations modernes, des graphiques Bokeh interactifs, et une intégration complète avec l'IA et l'API Claude.
+La plateforme BNM de détection de fraude bancaire a été entièrement améliorée avec un design professionnel, des animations modernes, des graphiques Bokeh interactifs, et une intégration complète avec l'IA et l'API Claude.
 
 ## ✨ Améliorations Apportées
 
 ### 1. Design et Interface Utilisateur
-- **Nouvelle palette de couleurs** basée sur le logo BAMIS (vert #28a745, orange #ff8c00)
+- **Nouvelle palette de couleurs** basée sur le logo BNM (vert #28a745, orange #FF8C00)
 - **Animations CSS** fluides et professionnelles
 - **Interface responsive** optimisée pour desktop et mobile
-- **Thème cohérent** avec l'identité visuelle BAMIS
+- **Thème cohérent** avec l'identité visuelle BNM
 - **Gradients modernes** et effets visuels avancés
 
 ### 2. Graphiques et Visualisations
@@ -68,7 +68,7 @@ La plateforme BAMIS de détection de fraude bancaire a été entièrement améli
 ### Installation
 ```bash
 # Cloner le projet
-tar -xzf bamis_enhanced_fraud_platform_final.tar.gz
+tar -xzf BNM_enhanced_fraud_platform_final.tar.gz
 cd enhanced_banking_platform
 
 # Installer les dépendances
@@ -92,8 +92,8 @@ SECRET_KEY=your_secret_key_here
 ## 🎨 Guide de Style
 
 ### Couleurs Principales
-- **Vert BAMIS**: #28a745 (actions positives, succès)
-- **Orange BAMIS**: #ff8c00 (alertes, attention)
+- **Vert BNM**: #28a745 (actions positives, succès)
+- **Orange BNM**: #FF8C00 (alertes, attention)
 - **Bleu**: #007bff (informations, navigation)
 - **Rouge**: #dc3545 (erreurs, fraudes)
 
@@ -189,7 +189,7 @@ SECRET_KEY=your_secret_key_here
 ## 📞 Support et Maintenance
 
 ### Contact
-- **Équipe de développement**: BAMIS Tech Team
+- **Équipe de développement**: BNM Tech Team
 - **Documentation**: Voir README.md et guides utilisateur
 - **Issues**: Utiliser le système de tickets intégré
 

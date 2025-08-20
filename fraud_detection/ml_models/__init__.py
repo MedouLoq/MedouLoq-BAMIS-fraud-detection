@@ -1,5 +1,5 @@
 """
-Module de modèles d'apprentissage automatique pour la détection de fraude BAMIS
+Module de modèles d'apprentissage automatique pour la détection de fraude BNM
 """
 
 from .model_interface import (

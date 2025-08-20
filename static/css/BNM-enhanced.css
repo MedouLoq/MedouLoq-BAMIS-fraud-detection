@@ -1,62 +1,62 @@
-/* BAMIS Enhanced Banking Fraud Detection Platform - Modern Design */
+/* BNM Enhanced Banking Fraud Detection Platform - Modern Design */
 
 /* ==================== BRAND COLORS FROM LOGO ==================== */
 :root {
-    /* BAMIS Logo Colors - Extracted from actual logo */
-    --bamis-green-primary: #4CAF50;      /* Bright green from logo */
-    --bamis-green-light: #66BB6A;        /* Lighter green variant */
-    --bamis-green-dark: #388E3C;         /* Darker green variant */
-    --bamis-green-accent: #81C784;       /* Accent green */
+    /* BNM Logo Colors - Extracted from actual logo */
+    --BNM-green-primary: #157e18;      /* Bright green from logo */
+    --BNM-green-light: #66BB6A;        /* Lighter green variant */
+    --BNM-green-dark: #388E3C;         /* Darker green variant */
+    --BNM-green-accent: #81C784;       /* Accent green */
     
-    --bamis-orange-primary: #FF9800;     /* Bright orange from logo */
-    --bamis-orange-light: #FFB74D;       /* Lighter orange variant */
-    --bamis-orange-dark: #F57C00;        /* Darker orange variant */
-    --bamis-orange-accent: #FFCC02;      /* Accent orange */
+    --BNM-orange-primary: #bb8c5e;     /* Bright orange from logo */
+    --BNM-orange-light: #cf943a;       /* Lighter orange variant */
+    --BNM-orange-dark: #94660c;        /* Darker orange variant */
+    --BNM-orange-accent: #debc32;      /* Accent orange */
     
     /* Modern Color Palette */
-    --bamis-black: #000000;              /* Logo background */
-    --bamis-white: #FFFFFF;
-    --bamis-gray-50: #FAFAFA;
-    --bamis-gray-100: #F5F5F5;
-    --bamis-gray-200: #EEEEEE;
-    --bamis-gray-300: #E0E0E0;
-    --bamis-gray-400: #BDBDBD;
-    --bamis-gray-500: #9E9E9E;
-    --bamis-gray-600: #757575;
-    --bamis-gray-700: #424242;
-    --bamis-gray-800: #212121;
-    --bamis-gray-900: #0D1117;
+    --BNM-black: #000000;              /* Logo background */
+    --BNM-white: #FFFFFF;
+    --BNM-gray-50: #FAFAFA;
+    --BNM-gray-100: #F5F5F5;
+    --BNM-gray-200: #EEEEEE;
+    --BNM-gray-300: #E0E0E0;
+    --BNM-gray-400: #BDBDBD;
+    --BNM-gray-500: #9E9E9E;
+    --BNM-gray-600: #757575;
+    --BNM-gray-700: #424242;
+    --BNM-gray-800: #212121;
+    --BNM-gray-900: #0D1117;
     
     /* Status Colors */
-    --bamis-success: var(--bamis-green-primary);
-    --bamis-warning: var(--bamis-orange-primary);
-    --bamis-danger: #F44336;
-    --bamis-info: #2196F3;
+    --BNM-success: var(--BNM-green-primary);
+    --BNM-warning: var(--BNM-orange-primary);
+    --BNM-danger: #F44336;
+    --BNM-info: #2196F3;
     
     /* Advanced Gradients */
-    --bamis-gradient-primary: linear-gradient(135deg, var(--bamis-green-primary) 0%, var(--bamis-green-light) 50%, var(--bamis-green-accent) 100%);
-    --bamis-gradient-secondary: linear-gradient(135deg, var(--bamis-orange-primary) 0%, var(--bamis-orange-light) 50%, var(--bamis-orange-accent) 100%);
-    --bamis-gradient-hero: linear-gradient(135deg, var(--bamis-green-dark) 0%, var(--bamis-green-primary) 30%, var(--bamis-orange-primary) 70%, var(--bamis-orange-dark) 100%);
-    --bamis-gradient-card: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
-    --bamis-gradient-glass: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    --BNM-gradient-primary: linear-gradient(135deg, var(--BNM-green-primary) 0%, var(--BNM-green-light) 50%, var(--BNM-green-accent) 100%);
+    --BNM-gradient-secondary: linear-gradient(135deg, var(--BNM-orange-primary) 0%, var(--BNM-orange-light) 50%, var(--BNM-orange-accent) 100%);
+    --BNM-gradient-hero: linear-gradient(135deg, var(--BNM-green-dark) 0%, var(--BNM-green-primary) 30%, var(--BNM-orange-primary) 70%, var(--BNM-orange-dark) 100%);
+    --BNM-gradient-card: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+    --BNM-gradient-glass: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
     
     /* Modern Shadows */
-    --bamis-shadow-xs: 0 1px 2px rgba(76, 175, 80, 0.05);
-    --bamis-shadow-sm: 0 2px 4px rgba(76, 175, 80, 0.1), 0 1px 2px rgba(76, 175, 80, 0.06);
-    --bamis-shadow-md: 0 4px 8px rgba(76, 175, 80, 0.12), 0 2px 4px rgba(76, 175, 80, 0.08);
-    --bamis-shadow-lg: 0 8px 16px rgba(76, 175, 80, 0.15), 0 4px 8px rgba(76, 175, 80, 0.1);
-    --bamis-shadow-xl: 0 16px 32px rgba(76, 175, 80, 0.2), 0 8px 16px rgba(76, 175, 80, 0.15);
-    --bamis-shadow-2xl: 0 24px 48px rgba(76, 175, 80, 0.25), 0 12px 24px rgba(76, 175, 80, 0.2);
+    --BNM-shadow-xs: 0 1px 2px rgba(76, 175, 80, 0.05);
+    --BNM-shadow-sm: 0 2px 4px rgba(76, 175, 80, 0.1), 0 1px 2px rgba(76, 175, 80, 0.06);
+    --BNM-shadow-md: 0 4px 8px rgba(76, 175, 80, 0.12), 0 2px 4px rgba(76, 175, 80, 0.08);
+    --BNM-shadow-lg: 0 8px 16px rgba(76, 175, 80, 0.15), 0 4px 8px rgba(76, 175, 80, 0.1);
+    --BNM-shadow-xl: 0 16px 32px rgba(76, 175, 80, 0.2), 0 8px 16px rgba(76, 175, 80, 0.15);
+    --BNM-shadow-2xl: 0 24px 48px rgba(76, 175, 80, 0.25), 0 12px 24px rgba(76, 175, 80, 0.2);
     
     /* Glass Morphism */
-    --bamis-glass-bg: rgba(255, 255, 255, 0.1);
-    --bamis-glass-border: rgba(255, 255, 255, 0.2);
-    --bamis-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --BNM-glass-bg: rgba(255, 255, 255, 0.1);
+    --BNM-glass-border: rgba(255, 255, 255, 0.2);
+    --BNM-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     
     /* Typography */
-    --bamis-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --bamis-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-    --bamis-font-display: 'Inter', system-ui, sans-serif;
+    --BNM-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --BNM-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --BNM-font-display: 'Inter', system-ui, sans-serif;
     
     /* Spacing Scale */
     --space-1: 0.25rem;
@@ -100,9 +100,9 @@ html {
 }
 
 body {
-    font-family: var(--bamis-font-family);
-    background: linear-gradient(135deg, var(--bamis-gray-50) 0%, var(--bamis-gray-100) 100%);
-    color: var(--bamis-gray-800);
+    font-family: var(--BNM-font-family);
+    background: linear-gradient(135deg, var(--BNM-gray-50) 0%, var(--BNM-gray-100) 100%);
+    color: var(--BNM-gray-800);
     line-height: 1.6;
     min-height: 100vh;
     overflow-x: hidden;
@@ -110,11 +110,11 @@ body {
 
 /* ==================== MODERN NAVIGATION ==================== */
 .navbar {
-    background: var(--bamis-glass-bg) !important;
+    background: var(--BNM-glass-bg) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--bamis-glass-border);
-    box-shadow: var(--bamis-shadow-lg);
+    border-bottom: 1px solid var(--BNM-glass-border);
+    box-shadow: var(--BNM-shadow-lg);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -124,7 +124,7 @@ body {
 .navbar-brand {
     font-weight: 800;
     font-size: 1.75rem;
-    background: var(--bamis-gradient-hero);
+    background: var(--BNM-gradient-hero);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -143,7 +143,7 @@ body {
 .logo-icon {
     width: 40px;
     height: 40px;
-    background: var(--bamis-gradient-hero);
+    background: var(--BNM-gradient-hero);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
@@ -151,17 +151,17 @@ body {
     color: white;
     font-weight: bold;
     font-size: 1.5rem;
-    box-shadow: var(--bamis-shadow-md);
+    box-shadow: var(--BNM-shadow-md);
     transition: var(--transition-bounce);
 }
 
 .logo-icon:hover {
     transform: rotate(360deg) scale(1.1);
-    box-shadow: var(--bamis-shadow-xl);
+    box-shadow: var(--BNM-shadow-xl);
 }
 
 .navbar-nav .nav-link {
-    color: var(--bamis-gray-700) !important;
+    color: var(--BNM-gray-700) !important;
     font-weight: 600;
     padding: var(--space-3) var(--space-4) !important;
     border-radius: var(--radius-lg);
@@ -178,7 +178,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
     transition: var(--transition-normal);
     z-index: -1;
 }
@@ -190,13 +190,13 @@ body {
 .navbar-nav .nav-link:hover {
     color: white !important;
     transform: translateY(-2px);
-    box-shadow: var(--bamis-shadow-lg);
+    box-shadow: var(--BNM-shadow-lg);
 }
 
 .navbar-nav .nav-link.active {
     color: white !important;
-    background: var(--bamis-gradient-primary);
-    box-shadow: var(--bamis-shadow-md);
+    background: var(--BNM-gradient-primary);
+    box-shadow: var(--BNM-shadow-md);
 }
 
 /* ==================== MODERN BUTTONS ==================== */
@@ -237,69 +237,69 @@ body {
 }
 
 .btn-primary {
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
     color: white;
-    box-shadow: var(--bamis-shadow-md);
+    box-shadow: var(--BNM-shadow-md);
 }
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: var(--bamis-shadow-xl);
+    box-shadow: var(--BNM-shadow-xl);
     color: white;
 }
 
 .btn-secondary {
-    background: var(--bamis-gradient-secondary);
+    background: var(--BNM-gradient-secondary);
     color: white;
-    box-shadow: var(--bamis-shadow-md);
+    box-shadow: var(--BNM-shadow-md);
 }
 
 .btn-secondary:hover {
     transform: translateY(-3px);
-    box-shadow: var(--bamis-shadow-xl);
+    box-shadow: var(--BNM-shadow-xl);
     color: white;
 }
 
 .btn-outline-primary {
     background: transparent;
-    color: var(--bamis-green-primary);
-    border: 2px solid var(--bamis-green-primary);
+    color: var(--BNM-green-primary);
+    border: 2px solid var(--BNM-green-primary);
     position: relative;
 }
 
 .btn-outline-primary::before {
-    background: var(--bamis-green-primary);
+    background: var(--BNM-green-primary);
 }
 
 .btn-outline-primary:hover {
     color: white;
     transform: translateY(-3px);
-    box-shadow: var(--bamis-shadow-lg);
+    box-shadow: var(--BNM-shadow-lg);
 }
 
 .btn-glass {
-    background: var(--bamis-glass-bg);
+    background: var(--BNM-glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--bamis-glass-border);
-    color: var(--bamis-gray-800);
-    box-shadow: var(--bamis-glass-shadow);
+    border: 1px solid var(--BNM-glass-border);
+    color: var(--BNM-gray-800);
+    box-shadow: var(--BNM-glass-shadow);
 }
 
 .btn-glass:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-3px);
-    box-shadow: var(--bamis-shadow-xl);
+    box-shadow: var(--BNM-shadow-xl);
 }
 
 /* ==================== MODERN CARDS ==================== */
 .card {
-    background: var(--bamis-gradient-card);
+    background: var(--BNM-gradient-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--bamis-glass-border);
+    border: 1px solid var(--BNM-glass-border);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--bamis-shadow-lg);
+    box-shadow: var(--BNM-shadow-lg);
     transition: var(--transition-normal);
     overflow: hidden;
     position: relative;
@@ -312,16 +312,16 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--bamis-gradient-hero);
+    background: var(--BNM-gradient-hero);
 }
 
 .card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--bamis-shadow-2xl);
+    box-shadow: var(--BNM-shadow-2xl);
 }
 
 .card-header {
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
     color: white;
     border: none;
     padding: var(--space-6);
@@ -362,13 +362,13 @@ body {
 }
 
 .metric-card {
-    background: var(--bamis-gradient-card);
+    background: var(--BNM-gradient-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--bamis-glass-border);
+    border: 1px solid var(--BNM-glass-border);
     border-radius: var(--radius-2xl);
     padding: var(--space-8);
-    box-shadow: var(--bamis-shadow-lg);
+    box-shadow: var(--BNM-shadow-lg);
     transition: var(--transition-normal);
     position: relative;
     overflow: hidden;
@@ -382,72 +382,72 @@ body {
     left: 0;
     right: 0;
     height: 6px;
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
 }
 
 .metric-card.orange::before {
-    background: var(--bamis-gradient-secondary);
+    background: var(--BNM-gradient-secondary);
 }
 
 .metric-card.danger::before {
-    background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
 }
 
 .metric-card.info::before {
-    background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+    background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
 }
 
 .metric-card:hover {
     transform: translateY(-12px) scale(1.02);
-    box-shadow: var(--bamis-shadow-2xl);
+    box-shadow: var(--BNM-shadow-2xl);
 }
 
 .metric-icon {
     width: 80px;
     height: 80px;
     margin: 0 auto var(--space-4);
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
     color: white;
-    box-shadow: var(--bamis-shadow-lg);
+    box-shadow: var(--BNM-shadow-lg);
     transition: var(--transition-bounce);
 }
 
 .metric-card.orange .metric-icon {
-    background: var(--bamis-gradient-secondary);
+    background: var(--BNM-gradient-secondary);
 }
 
 .metric-card.danger .metric-icon {
-    background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
 }
 
 .metric-card.info .metric-icon {
-    background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+    background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
 }
 
 .metric-card:hover .metric-icon {
     transform: scale(1.1) rotate(10deg);
-    box-shadow: var(--bamis-shadow-xl);
+    box-shadow: var(--BNM-shadow-xl);
 }
 
 .metric-value {
     font-size: 3rem;
     font-weight: 900;
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1;
     margin-bottom: var(--space-2);
-    font-family: var(--bamis-font-display);
+    font-family: var(--BNM-font-display);
 }
 
 .metric-card.orange .metric-value {
-    background: var(--bamis-gradient-secondary);
+    background: var(--BNM-gradient-secondary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -456,7 +456,7 @@ body {
 .metric-label {
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--bamis-gray-600);
+    color: var(--BNM-gray-600);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: var(--space-3);
@@ -476,30 +476,30 @@ body {
 
 .metric-change.positive {
     background: rgba(76, 175, 80, 0.1);
-    color: var(--bamis-green-dark);
-    border: 1px solid var(--bamis-green-primary);
+    color: var(--BNM-green-dark);
+    border: 1px solid var(--BNM-green-primary);
 }
 
 .metric-change.negative {
     background: rgba(244, 67, 54, 0.1);
-    color: var(--bamis-danger);
-    border: 1px solid var(--bamis-danger);
+    color: var(--BNM-danger);
+    border: 1px solid var(--BNM-danger);
 }
 
 /* ==================== ENHANCED TABLES ==================== */
 .table-container {
-    background: var(--bamis-gradient-card);
+    background: var(--BNM-gradient-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--bamis-glass-border);
+    border: 1px solid var(--BNM-glass-border);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--bamis-shadow-lg);
+    box-shadow: var(--BNM-shadow-lg);
     overflow: hidden;
     transition: var(--transition-normal);
 }
 
 .table-container:hover {
-    box-shadow: var(--bamis-shadow-xl);
+    box-shadow: var(--BNM-shadow-xl);
 }
 
 .table {
@@ -509,7 +509,7 @@ body {
 }
 
 .table thead th {
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
     color: white;
     border: none;
     font-weight: 700;
@@ -549,32 +549,32 @@ body {
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    box-shadow: var(--bamis-shadow-sm);
+    box-shadow: var(--BNM-shadow-sm);
     transition: var(--transition-normal);
 }
 
 .badge:hover {
     transform: scale(1.05);
-    box-shadow: var(--bamis-shadow-md);
+    box-shadow: var(--BNM-shadow-md);
 }
 
 .badge.bg-success {
-    background: var(--bamis-gradient-primary) !important;
+    background: var(--BNM-gradient-primary) !important;
     color: white;
 }
 
 .badge.bg-warning {
-    background: var(--bamis-gradient-secondary) !important;
+    background: var(--BNM-gradient-secondary) !important;
     color: white;
 }
 
 .badge.bg-danger {
-    background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%) !important;
+    background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%) !important;
     color: white;
 }
 
 .badge.bg-info {
-    background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%) !important;
+    background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%) !important;
     color: white;
 }
 
@@ -603,48 +603,48 @@ body {
 
 .alert-success {
     background: rgba(76, 175, 80, 0.1);
-    color: var(--bamis-green-dark);
+    color: var(--BNM-green-dark);
     border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .alert-success::before {
-    background: var(--bamis-gradient-primary);
+    background: var(--BNM-gradient-primary);
 }
 
 .alert-warning {
     background: rgba(255, 152, 0, 0.1);
-    color: var(--bamis-orange-dark);
+    color: var(--BNM-orange-dark);
     border: 1px solid rgba(255, 152, 0, 0.3);
 }
 
 .alert-warning::before {
-    background: var(--bamis-gradient-secondary);
+    background: var(--BNM-gradient-secondary);
 }
 
 .alert-danger {
     background: rgba(244, 67, 54, 0.1);
-    color: var(--bamis-danger);
+    color: var(--BNM-danger);
     border: 1px solid rgba(244, 67, 54, 0.3);
 }
 
 .alert-danger::before {
-    background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+    background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
 }
 
 /* ==================== ENHANCED FORMS ==================== */
 .form-control {
-    border: 2px solid var(--bamis-gray-300);
+    border: 2px solid var(--BNM-gray-300);
     border-radius: var(--radius-xl);
     padding: var(--space-4) var(--space-5);
     font-size: 1rem;
     transition: var(--transition-normal);
-    background: var(--bamis-gradient-card);
+    background: var(--BNM-gradient-card);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
 .form-control:focus {
-    border-color: var(--bamis-green-primary);
+    border-color: var(--BNM-green-primary);
     box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
     background: white;
     outline: none;
@@ -652,7 +652,7 @@ body {
 
 .form-label {
     font-weight: 700;
-    color: var(--bamis-gray-700);
+    color: var(--BNM-gray-700);
     margin-bottom: var(--space-2);
     font-size: 0.875rem;
     text-transform: uppercase;
@@ -666,7 +666,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--bamis-glass-bg);
+    background: var(--BNM-glass-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
@@ -680,7 +680,7 @@ body {
     width: 40px;
     height: 40px;
     border: 4px solid rgba(76, 175, 80, 0.1);
-    border-left: 4px solid var(--bamis-green-primary);
+    border-left: 4px solid var(--BNM-green-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -760,7 +760,7 @@ body {
 
 /* ==================== HERO SECTIONS ==================== */
 .hero-section {
-    background: var(--bamis-gradient-hero);
+    background: var(--BNM-gradient-hero);
     color: white;
     padding: var(--space-20) var(--space-8);
     border-radius: var(--radius-2xl);
@@ -790,7 +790,7 @@ body {
     font-size: 3.5rem;
     font-weight: 900;
     margin-bottom: var(--space-4);
-    font-family: var(--bamis-font-display);
+    font-family: var(--BNM-font-display);
     text-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
@@ -879,51 +879,51 @@ body {
 }
 
 /* ==================== UTILITY CLASSES ==================== */
-.text-bamis-green {
-    color: var(--bamis-green-primary) !important;
+.text-BNM-green {
+    color: var(--BNM-green-primary) !important;
 }
 
-.text-bamis-orange {
-    color: var(--bamis-orange-primary) !important;
+.text-BNM-orange {
+    color: var(--BNM-orange-primary) !important;
 }
 
-.bg-bamis-green {
-    background: var(--bamis-gradient-primary) !important;
+.bg-BNM-green {
+    background: var(--BNM-gradient-primary) !important;
 }
 
-.bg-bamis-orange {
-    background: var(--bamis-gradient-secondary) !important;
+.bg-BNM-orange {
+    background: var(--BNM-gradient-secondary) !important;
 }
 
-.border-bamis-green {
-    border-color: var(--bamis-green-primary) !important;
+.border-BNM-green {
+    border-color: var(--BNM-green-primary) !important;
 }
 
-.border-bamis-orange {
-    border-color: var(--bamis-orange-primary) !important;
+.border-BNM-orange {
+    border-color: var(--BNM-orange-primary) !important;
 }
 
-.shadow-bamis {
-    box-shadow: var(--bamis-shadow-md) !important;
+.shadow-BNM {
+    box-shadow: var(--BNM-shadow-md) !important;
 }
 
-.shadow-bamis-lg {
-    box-shadow: var(--bamis-shadow-lg) !important;
+.shadow-BNM-lg {
+    box-shadow: var(--BNM-shadow-lg) !important;
 }
 
-.shadow-bamis-xl {
-    box-shadow: var(--bamis-shadow-xl) !important;
+.shadow-BNM-xl {
+    box-shadow: var(--BNM-shadow-xl) !important;
 }
 
 .glass {
-    background: var(--bamis-glass-bg) !important;
+    background: var(--BNM-glass-bg) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--bamis-glass-border);
+    border: 1px solid var(--BNM-glass-border);
 }
 
 .gradient-text {
-    background: var(--bamis-gradient-hero);
+    background: var(--BNM-gradient-hero);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -932,21 +932,21 @@ body {
 /* ==================== DARK MODE SUPPORT ==================== */
 @media (prefers-color-scheme: dark) {
     :root {
-        --bamis-gray-50: #0D1117;
-        --bamis-gray-100: #161B22;
-        --bamis-gray-200: #21262D;
-        --bamis-gray-300: #30363D;
-        --bamis-gray-400: #484F58;
-        --bamis-gray-500: #656D76;
-        --bamis-gray-600: #8B949E;
-        --bamis-gray-700: #C9D1D9;
-        --bamis-gray-800: #F0F6FC;
-        --bamis-gray-900: #FFFFFF;
+        --BNM-gray-50: #0D1117;
+        --BNM-gray-100: #161B22;
+        --BNM-gray-200: #21262D;
+        --BNM-gray-300: #30363D;
+        --BNM-gray-400: #484F58;
+        --BNM-gray-500: #656D76;
+        --BNM-gray-600: #8B949E;
+        --BNM-gray-700: #C9D1D9;
+        --BNM-gray-800: #F0F6FC;
+        --BNM-gray-900: #FFFFFF;
     }
     
     body {
-        background: linear-gradient(135deg, var(--bamis-gray-50) 0%, var(--bamis-gray-100) 100%);
-        color: var(--bamis-gray-800);
+        background: linear-gradient(135deg, var(--BNM-gray-50) 0%, var(--BNM-gray-100) 100%);
+        color: var(--BNM-gray-800);
     }
     
     .card {

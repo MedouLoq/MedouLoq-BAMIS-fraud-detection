@@ -1,12 +1,12 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Analytics - BAMIS Fraud Detection Platform{% endblock %}
+{% block title %}Analytics - BNM Fraud Detection Platform{% endblock %}
 
 {% block extra_css %}
 <style>
     .analytics-hero {
-        background: var(--bamis-gradient-hero);
+        background: var(--BNM-gradient-hero);
         color: white;
         padding: var(--space-12) var(--space-8);
         border-radius: var(--radius-2xl);
@@ -37,7 +37,7 @@
         font-weight: 900;
         margin-bottom: var(--space-4);
         text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        font-family: var(--bamis-font-display);
+        font-family: var(--BNM-font-display);
     }
     
     .hero-subtitle {
@@ -47,20 +47,20 @@
     }
     
     .filter-section {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
         padding: var(--space-6);
         margin-bottom: var(--space-8);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
     }
     
     .filter-title {
         font-size: 1.25rem;
         font-weight: 700;
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
         margin-bottom: var(--space-4);
         display: flex;
         align-items: center;
@@ -82,7 +82,7 @@
     
     .filter-label {
         font-weight: 600;
-        color: var(--bamis-gray-700);
+        color: var(--BNM-gray-700);
         font-size: 0.875rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -90,7 +90,7 @@
     
     .filter-select {
         padding: var(--space-3) var(--space-4);
-        border: 2px solid var(--bamis-gray-300);
+        border: 2px solid var(--BNM-gray-300);
         border-radius: var(--radius-lg);
         background: white;
         font-size: 0.875rem;
@@ -99,7 +99,7 @@
     
     .filter-select:focus {
         outline: none;
-        border-color: var(--bamis-green-primary);
+        border-color: var(--BNM-green-primary);
         box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
     }
     
@@ -117,13 +117,13 @@
     }
     
     .stat-card {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
         padding: var(--space-6);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
         transition: var(--transition-normal);
         position: relative;
         overflow: hidden;
@@ -136,24 +136,24 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: var(--bamis-gradient-primary);
+        background: var(--BNM-gradient-primary);
     }
     
     .stat-card.orange::before {
-        background: var(--bamis-gradient-secondary);
+        background: var(--BNM-gradient-secondary);
     }
     
     .stat-card.danger::before {
-        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+        background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
     }
     
     .stat-card.info::before {
-        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+        background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
     }
     
     .stat-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
     }
     
     .stat-header {
@@ -172,35 +172,35 @@
         justify-content: center;
         font-size: 1.5rem;
         color: white;
-        background: var(--bamis-gradient-primary);
-        box-shadow: var(--bamis-shadow-md);
+        background: var(--BNM-gradient-primary);
+        box-shadow: var(--BNM-shadow-md);
     }
     
     .stat-card.orange .stat-icon {
-        background: var(--bamis-gradient-secondary);
+        background: var(--BNM-gradient-secondary);
     }
     
     .stat-card.danger .stat-icon {
-        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+        background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
     }
     
     .stat-card.info .stat-icon {
-        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+        background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
     }
     
     .stat-value {
         font-size: 2.5rem;
         font-weight: 900;
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
         line-height: 1;
         margin-bottom: var(--space-2);
-        font-family: var(--bamis-font-display);
+        font-family: var(--BNM-font-display);
     }
     
     .stat-label {
         font-size: 0.875rem;
         font-weight: 600;
-        color: var(--bamis-gray-600);
+        color: var(--BNM-gray-600);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: var(--space-3);
@@ -220,37 +220,37 @@
     
     .trend-up {
         background: rgba(244, 67, 54, 0.1);
-        color: var(--bamis-danger);
-        border: 1px solid var(--bamis-danger);
+        color: var(--BNM-danger);
+        border: 1px solid var(--BNM-danger);
     }
     
     .trend-down {
         background: rgba(76, 175, 80, 0.1);
-        color: var(--bamis-green-dark);
-        border: 1px solid var(--bamis-green-primary);
+        color: var(--BNM-green-dark);
+        border: 1px solid var(--BNM-green-primary);
     }
     
     .trend-stable {
         background: rgba(158, 158, 158, 0.1);
-        color: var(--bamis-gray-600);
-        border: 1px solid var(--bamis-gray-400);
+        color: var(--BNM-gray-600);
+        border: 1px solid var(--BNM-gray-400);
     }
     
     .charts-section {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
         padding: var(--space-8);
         margin-bottom: var(--space-8);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
         transition: var(--transition-normal);
     }
     
     .charts-section:hover {
         transform: translateY(-2px);
-        box-shadow: var(--bamis-shadow-xl);
+        box-shadow: var(--BNM-shadow-xl);
     }
     
     .charts-header {
@@ -259,13 +259,13 @@
         align-items: center;
         margin-bottom: var(--space-6);
         padding-bottom: var(--space-4);
-        border-bottom: 2px solid var(--bamis-gray-200);
+        border-bottom: 2px solid var(--BNM-gray-200);
     }
     
     .charts-title {
         font-size: 1.5rem;
         font-weight: 700;
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
         display: flex;
         align-items: center;
         gap: var(--space-3);
@@ -281,7 +281,7 @@
         background: white;
         border-radius: var(--radius-lg);
         padding: var(--space-4);
-        box-shadow: var(--bamis-shadow-sm);
+        box-shadow: var(--BNM-shadow-sm);
     }
     
     .insights-section {
@@ -295,13 +295,13 @@
     }
     
     .insight-card {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-xl);
         padding: var(--space-5);
-        box-shadow: var(--bamis-shadow-md);
+        box-shadow: var(--BNM-shadow-md);
         transition: var(--transition-normal);
         position: relative;
         overflow: hidden;
@@ -317,20 +317,20 @@
     }
     
     .insight-card.warning::before {
-        background: var(--bamis-gradient-secondary);
+        background: var(--BNM-gradient-secondary);
     }
     
     .insight-card.danger::before {
-        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+        background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
     }
     
     .insight-card.info::before {
-        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+        background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
     }
     
     .insight-card:hover {
         transform: translateY(-2px);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
     }
     
     .insight-header {
@@ -352,52 +352,52 @@
     }
     
     .insight-card.warning .insight-icon {
-        background: var(--bamis-gradient-secondary);
+        background: var(--BNM-gradient-secondary);
     }
     
     .insight-card.danger .insight-icon {
-        background: linear-gradient(135deg, var(--bamis-danger) 0%, #E57373 100%);
+        background: linear-gradient(135deg, var(--BNM-danger) 0%, #E57373 100%);
     }
     
     .insight-card.info .insight-icon {
-        background: linear-gradient(135deg, var(--bamis-info) 0%, #64B5F6 100%);
+        background: linear-gradient(135deg, var(--BNM-info) 0%, #64B5F6 100%);
     }
     
     .insight-title {
         font-weight: 700;
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
         font-size: 1rem;
     }
     
     .insight-message {
-        color: var(--bamis-gray-700);
+        color: var(--BNM-gray-700);
         margin-bottom: var(--space-3);
         line-height: 1.5;
     }
     
     .insight-recommendation {
         font-size: 0.875rem;
-        color: var(--bamis-gray-600);
+        color: var(--BNM-gray-600);
         font-style: italic;
         padding: var(--space-2) var(--space-3);
         background: rgba(255, 255, 255, 0.5);
         border-radius: var(--radius-md);
-        border-left: 3px solid var(--bamis-green-primary);
+        border-left: 3px solid var(--BNM-green-primary);
     }
     
     .data-table-section {
-        background: var(--bamis-gradient-card);
+        background: var(--BNM-gradient-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--bamis-glass-border);
+        border: 1px solid var(--BNM-glass-border);
         border-radius: var(--radius-2xl);
         overflow: hidden;
         margin-bottom: var(--space-8);
-        box-shadow: var(--bamis-shadow-lg);
+        box-shadow: var(--BNM-shadow-lg);
     }
     
     .table-header {
-        background: var(--bamis-gradient-primary);
+        background: var(--BNM-gradient-primary);
         color: white;
         padding: var(--space-6);
         font-weight: 700;
@@ -414,7 +414,7 @@
     
     .data-table th {
         background: rgba(76, 175, 80, 0.1);
-        color: var(--bamis-gray-800);
+        color: var(--BNM-gray-800);
         padding: var(--space-4);
         text-align: left;
         font-weight: 700;
@@ -439,7 +439,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: var(--bamis-glass-bg);
+        background: var(--BNM-glass-bg);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         display: flex;
@@ -453,7 +453,7 @@
         width: 40px;
         height: 40px;
         border: 4px solid rgba(76, 175, 80, 0.1);
-        border-left: 4px solid var(--bamis-green-primary);
+        border-left: 4px solid var(--BNM-green-primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -706,7 +706,7 @@
                 <tr>
                     <td>
                         <strong>{{ type_stat.trx_type }}</strong>
-                        <div style="font-size: 0.75rem; color: var(--bamis-gray-500);">
+                        <div style="font-size: 0.75rem; color: var(--BNM-gray-500);">
                             {% if type_stat.trx_type == 'TRF' %}Transfert
                             {% elif type_stat.trx_type == 'RT' %}Retrait
                             {% elif type_stat.trx_type == 'RCD' %}Recharge
@@ -716,7 +716,7 @@
                     </td>
                     <td><strong>{{ type_stat.count }}</strong></td>
                     <td>
-                        <span class="{% if type_stat.fraud_count > 0 %}text-bamis-orange{% else %}text-bamis-green{% endif %}">
+                        <span class="{% if type_stat.fraud_count > 0 %}text-BNM-orange{% else %}text-BNM-green{% endif %}">
                             <strong>{{ type_stat.fraud_count }}</strong>
                         </span>
                     </td>
@@ -760,7 +760,7 @@
                     </td>
                     <td>{{ client.total_transactions }}</td>
                     <td>
-                        <span class="text-bamis-orange">
+                        <span class="text-BNM-orange">
                             <strong>{{ client.fraud_count }}</strong>
                         </span>
                     </td>

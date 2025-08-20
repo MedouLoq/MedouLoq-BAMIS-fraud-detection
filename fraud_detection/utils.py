@@ -312,7 +312,7 @@ def update_client_statistics(client_id: str):
         client.total_amount_received = received_stats['total_amount'] or Decimal('0')
         client.fraud_transactions_count = all_stats['total_fraud_count'] or 0
         
-        # Calculer le taux de fraude
+        # Calculer et assigner le taux de fraude
         total_transactions = all_stats['total_count'] or 0
         if total_transactions > 0:
             client.fraud_rate = (client.fraud_transactions_count / total_transactions) * 100
@@ -335,7 +335,6 @@ def update_client_statistics(client_id: str):
         
     except Exception as e:
         logger.error(f"Error updating client statistics for {client_id}: {e}")
-
 def update_bank_statistics(bank_code: str):
     """Met à jour les statistiques de la banque"""
     try:

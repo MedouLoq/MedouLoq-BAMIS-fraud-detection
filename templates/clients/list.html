@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Clients - BAMIS Fraud Detection{% endblock %}
+{% block title %}Clients - BNM Fraud Detection{% endblock %}
 
 {% block extra_js %}
 <script>
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         border-left-color: #28a745;
     }
     
-    .client-card.risk-watch {
+    .client-card.risk-medium {
         border-left-color: #fd7e14;
     }
     
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
         color: #155724;
     }
     
-    .risk-watch {
+    .risk-medium {
         background-color: #fff3cd;
         color: #856404;
     }
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <p class="mb-0">Clients Total</p>
         </div>
         <div class="stat-card orange">
-            <h3 class="mb-1">{{ clients_watch_count|default:0 }}</h3>
+            <h3 class="mb-1">{{ clients_medium_count|default:0 }}</h3>
             <p class="mb-0">Sous Surveillance</p>
         </div>
         <div class="stat-card red">
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <select class="form-select" name="risk">
                 <option value="">Tous les niveaux</option>
                 <option value="NORMAL" {% if request.GET.risk == 'NORMAL' %}selected{% endif %}>Normal</option>
-                <option value="WATCH" {% if request.GET.risk == 'WATCH' %}selected{% endif %}>Surveillance</option>
+                <option value="medium" {% if request.GET.risk == 'medium' %}selected{% endif %}>Surveillance</option>
                 <option value="SUSPECT" {% if request.GET.risk == 'SUSPECT' %}selected{% endif %}>Suspect</option>
             </select>
         </div>
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <a href="?risk=SUSPECT" class="btn btn-sm btn-outline-danger">
                 <i class="fas fa-exclamation-triangle"></i> Suspects Uniquement
             </a>
-            <a href="?risk=WATCH" class="btn btn-sm btn-outline-warning">
+            <a href="?risk=medium" class="btn btn-sm btn-outline-warning">
                 <i class="fas fa-eye"></i> Surveillance
             </a>
             <a href="?min_transactions=10" class="btn btn-sm btn-outline-success">

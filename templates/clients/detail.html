@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Client {{ client.client_id }} - BAMIS Fraud Detection{% endblock %}
+{% block title %}Client {{ client.client_id }} - BNM Fraud Detection{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -114,11 +114,11 @@
         margin-bottom: 2rem;
     }
     
-    .client-header.risk-watch {
+    .client-header.risk-medium {
         background: linear-gradient(135deg, #fd7e14 0%, #ff8c42 100%);
     }
     
-    .client-header.risk-suspect {
+    .client-header.risk-critical {
         background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
     }
     
@@ -179,8 +179,8 @@
     }
     
     .risk-normal { background-color: #28a745; }
-    .risk-watch { background-color: #fd7e14; }
-    .risk-suspect { background-color: #dc3545; }
+    .risk-medium { background-color: #fd7e14; }
+    .risk-critical { background-color: #dc3545; }
     
     .pattern-badge {
         background: #f8f9fa;
